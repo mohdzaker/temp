@@ -24,3 +24,5 @@ const authUser = (req, res, next) => {
         });
     }
 }
+
+export default authUser;
