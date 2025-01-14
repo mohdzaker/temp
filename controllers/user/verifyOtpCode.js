@@ -1,4 +1,3 @@
-import Otp from "../../models/Otp.js";
 import User from "../../models/User.js";
 import verifyOtp from "../../utils/verifyOtp.js";
 import jwt from "jsonwebtoken";
@@ -28,12 +27,13 @@ const verifyOtpCode = async (req, res) => {
         }
         const token = jwt.sign({
             mobile_number,
+            role: "user"
         }, process.env.JWT_SECRET);
 
         res.json({
             status: "success",
             success: true,
-            message: "Verification successful!",
+            message: "Verification successfull!",
             token
         })
     } catch (error) {
