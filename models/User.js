@@ -11,13 +11,13 @@ const User = sequelize.define("User", {
         type: Sequelize.BIGINT(200),
         allowNull: false,
     },
-    isVerified: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-    },
     walletBalance: {
         type: Sequelize.INTEGER(50),
         defaultValue: 0
+    },
+    role: {
+        type:Sequelize.STRING,
+        defaultValue: "user"
     }
 }); 
 

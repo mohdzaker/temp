@@ -7,6 +7,10 @@ const Otp = sequelize.define("Otp", {
         primaryKey: true,
         autoIncrement: true
     },
+    mobileNumber: {
+        type: Sequelize.BIGINT(200),
+        allowNull: false
+    },
     otpCode: {
         type: Sequelize.INTEGER(50),
         allowNull: false
