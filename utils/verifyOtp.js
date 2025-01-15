@@ -49,6 +49,14 @@ const verifyOtp = async (mobile_number, otp_code) => {
       };
     }
 
+    if(checkOtpExists.isUsed){
+      return {
+        status: "failed",
+        success: false,
+        message: "verification code has been already used!",
+      };
+    }
+
     const currentTime = new Date();
     if (currentTime > checkOtpExists.expiresAt) {
       return {
@@ -58,10 +66,28 @@ const verifyOtp = async (mobile_number, otp_code) => {
       };
     }
 
-    return {
+    const [updatedRowCount] = await Otp.update(
+      { isUsed: true }, 
+      {
+        where: {
+          mobileNumber: mobile_number,
+          otpCode: otp_code, 
+        },
+      }
+    );
+
+    if(updatedRowCount > 0){
+      return {
         status: "success",
         success: true,
         message: "Otp Verification was successful!"
+    }
+    }else{
+      return res.json({
+        status: "failed",
+        success: false,
+        message: "Something went wrong!"
+      })
     }
   } catch (error) {
     console.error("Error verifying OTP:", error.response?.data || error.message);
