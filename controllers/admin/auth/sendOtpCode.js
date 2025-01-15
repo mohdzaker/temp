@@ -1,7 +1,7 @@
-import Otp from "../../models/Otp.js";
-import { generateOTP, getExpirationDate } from "../../utils/index.js";
-import sendCode from "../../utils/sendOtp.js"
-import User from "../../models/User.js"
+import Otp from "../../../models/Otp.js";
+import { generateOTP, getExpirationDate } from "../../../utils/index.js";
+import sendCode from "../../../utils/sendOtp.js"
+import User from "../../../models/User.js"
 
 const sendOtpCode = async (req, res) => {
     try {

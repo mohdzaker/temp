@@ -1,5 +1,4 @@
-import User from "../../models/User.js";
-import verifyOtp from "../../utils/verifyOtp.js";
+import verifyOtp from "../../../utils/verifyOtp.js";
 import jwt from "jsonwebtoken";
 
 const verifyOtpCode = async (req, res) => {
