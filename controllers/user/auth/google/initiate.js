@@ -6,9 +6,9 @@ import rateLimit from "../../../../utils/rateLimit.js";
 import sendCode from "../../../../utils/sendOtp.js";
 import jwt from "jsonwebtoken";
 
-const initiate = async (req, res) => {
+const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy } = req.body; 
+    const { mobileNumber, google_token, referedBy, sms_hash } = req.body; 
 
     if (!mobileNumber || mobileNumber === "") {
       return res.status(400).json({
@@ -100,7 +100,7 @@ const initiate = async (req, res) => {
       }
 
       if (!checkEmailExists.isVerified) {
-        await sendVerifyCode(mobileNumber, google_token, res);
+        await sendVerifyCode(mobileNumber, google_token, res, sms_hash);
       } else {
         const token = jwt.sign(
           { id: checkEmailExists.id },
@@ -124,7 +124,7 @@ const initiate = async (req, res) => {
         referedBy: checkReferCode.id, 
         referCode,
       });
-      await sendVerifyCode(mobileNumber, google_token, res);
+      await sendVerifyCode(mobileNumber, google_token, res, sms_hash);
     }
   } catch (error) {
     console.error("Error during initiate:", error.message);
@@ -135,7 +135,7 @@ const initiate = async (req, res) => {
   }
 };
 
-export default initiate;
+export default initiateGoogle;
 
 const sendVerifyCode = async (mobileNumber, google_token, res) => {
   try {
@@ -157,7 +157,7 @@ const sendVerifyCode = async (mobileNumber, google_token, res) => {
       expiresAt,
     });
 
-    const sendOtp = await sendCode([mobileNumber], otpCode);
+    const sendOtp = await sendCode([mobileNumber], otpCode, sms_hash);
 
     if (sendOtp.status === "success" && sendOtp.success) {
       return res.status(201).json({

@@ -57,7 +57,7 @@ const fetchUserInfo = async (accessToken) => {
   }
 };
 
-const initiate = async (req, res) => {
+const initiateTrueCaller = async (req, res) => {
   try {
     const { authorizationCode, codeVerifier, referedBy } = req.body;
 
@@ -147,4 +147,4 @@ const initiate = async (req, res) => {
   }
 };
 
-export default initiate;
+export default initiateTrueCaller;

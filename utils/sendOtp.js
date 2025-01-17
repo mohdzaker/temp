@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const sendOTP = async (mobileNumbers, otpCode) => {
+const sendOTP = async (mobileNumbers, otpCode, sms_hash) => {
   try {
     const response = await axios.post(
       "https://www.fast2sms.com/dev/bulkV2",
@@ -8,7 +8,7 @@ const sendOTP = async (mobileNumbers, otpCode) => {
         route: "dlt",
         sender_id: "AFRUSH",
         message: "170019",
-        variables_values: `${otpCode}`,
+        variables_values: `${otpCode}${sms_hash}`,
         flash: "0",
         numbers: mobileNumbers[0]
       },

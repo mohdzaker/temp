@@ -2,7 +2,7 @@ import User from "../../../../models/User.js";
 import verifyOtp from "../../../../utils/verifyOtp.js";
 import jwt from "jsonwebtoken";
 
-const verify = async (req, res) => {
+const verifyGoogle = async (req, res) => {
   try {
     const { mobileNumber, otpCode } = req.body; 
 
@@ -81,4 +81,4 @@ const verify = async (req, res) => {
   }
 };
 
-export default verify;
+export default verifyGoogle;
