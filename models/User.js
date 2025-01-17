@@ -7,17 +7,41 @@ const User = sequelize.define("User", {
         primaryKey: true,
         autoIncrement: true
     },
-    mobileNumber: {
-        type: Sequelize.BIGINT(200),
-        allowNull: false,
+    username: {
+        type: Sequelize.STRING,
+        allowNull: false
     },
-    walletBalance: {
-        type: Sequelize.INTEGER(50),
-        defaultValue: 0
+    email: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    mobileNumber: {
+        type: Sequelize.BIGINT,
+        allowNull: false
+    },
+    profilePic: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    referedBy: {
+        type: Sequelize.STRING,
+        defaultValue: "",
+    },
+    referCode: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    isVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
     },
     role: {
-        type:Sequelize.STRING,
+        type: Sequelize.STRING,
         defaultValue: "user"
+    },
+    isBanned: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
     }
 }); 
 

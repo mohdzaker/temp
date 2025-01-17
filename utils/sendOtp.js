@@ -19,7 +19,7 @@ const sendOTP = async (mobileNumbers, otpCode) => {
         },
       }
     );
-
+    console.log(response.data)
     return {
       status: "success",
       success: true,

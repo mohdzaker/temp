@@ -1,7 +1,6 @@
 import express from "express";
 import sendOtpCode from "../controllers/admin/auth/sendOtpCode.js";
 import verifyOtpCode from "../controllers/admin/auth/verifyOtpCode.js";
-import rateLimitMiddleware from "../middlewares/rateLimit.js";
 import authAdmin from "../middlewares/authAdmin.js";
 import addOffer from "../controllers/admin/offer/addOffer.js";
 import editOffer from "../controllers/admin/offer/editOffer.js";
@@ -12,7 +11,7 @@ import deleteEvent from "../controllers/admin/event/deleteEvent.js";
 
 const adminRouter = express.Router();
 
-adminRouter.post("/sendOtpCode", rateLimitMiddleware, sendOtpCode);
+adminRouter.post("/sendOtpCode", sendOtpCode);
 adminRouter.post("/verifyOtpCode", verifyOtpCode);
 adminRouter.post("/addOffer", authAdmin, addOffer);
 adminRouter.post("/editOffer", authAdmin, editOffer);

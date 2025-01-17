@@ -1,15 +1,13 @@
 import express from "express";
-import sendOtpCode from "../controllers/user/sendOtpCode.js";
-import verifyOtpCode from "../controllers/user/verifyOtpCode.js";
-import authUser from "../middlewares/authUser.js"
-import rateLimitMiddleware from "../middlewares/rateLimit.js";
+import authUser from "../middlewares/authUser.js";
+import initiate from "../controllers/user/auth/google/initiate.js";
+import verify from "../controllers/user/auth/google/verify.js";
+import initiatee from "../controllers/user/auth/truecaller/initiate.js";
 
 const userRouter = express.Router();
 
-userRouter.post("/sendOtpCode", rateLimitMiddleware, sendOtpCode);
-userRouter.post("/verifyOtpCode", verifyOtpCode);
-userRouter.get("/test", authUser, (req, res) => {
-    res.send("hello")
-});
+userRouter.post("/auth/google", initiate);
+userRouter.post("/auth/google/verify", verify);
+userRouter.post("/auth/truecaller", initiate);
 
 export default userRouter;
