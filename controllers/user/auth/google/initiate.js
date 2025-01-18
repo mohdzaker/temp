@@ -3,12 +3,13 @@ import Otp from "../../../../models/Otp.js";
 import getTokenInfo from "../../../../utils/getTokenInfo.js";
 import { generateOTP, getExpirationDate } from "../../../../utils/index.js";
 import rateLimit from "../../../../utils/rateLimit.js";
-import sendCode from "../../../../utils/sendOtp.js";
+import sendOTP from "../../../../utils/sendOtp.js";
 import jwt from "jsonwebtoken";
 
 const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy, sms_hash } = req.body; 
+    const { mobileNumber, google_token, referedBy, sms_hash } = req.body;
+    console.log("sms hash: ", sms_hash)
 
     if (!mobileNumber || mobileNumber === "") {
       return res.status(400).json({
@@ -34,15 +35,15 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    if (!referedBy || referedBy.trim() === "") {
+    if (!sms_hash || sms_hash.trim() === "") {
       return res.status(400).json({
         status: "failed",
-        success: false,
-        message: "Please enter a valid referral code!",
+        message: "SMS hash is required and cannot be empty!",
       });
     }
 
     const tokenInfo = await getTokenInfo(google_token);
+    
     // const tokenInfo = {
     //   iss: 'https://accounts.google.com',
     //   azp: '978014925661-mnl4nvrta816q5lu5b28f24s1ntvhibe.apps.googleusercontent.com',
@@ -57,7 +58,7 @@ const initiateGoogle = async (req, res) => {
     //   iat: 1737005650,
     //   exp: 1737009250
     // }
-    
+
     if (tokenInfo?.status === "failed") {
       return res.status(401).json({
         status: "failed",
@@ -70,25 +71,31 @@ const initiateGoogle = async (req, res) => {
       where: { email: tokenInfo.email },
     });
 
-    const checkReferCode = await User.findOne({
-      where: { referCode: referedBy },
-    });
+    let referedById = null;
 
-    if (!checkReferCode) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid referral code!",
+    if (referedBy && referedBy !== "huntcash") {
+      const checkReferCode = await User.findOne({
+        where: { referCode: referedBy },
       });
-    }
 
-    if (
-      checkReferCode.referCode === referedBy &&
-      checkReferCode.email === tokenInfo.email
-    ) {
-      return res.status(403).json({
-        status: "failed",
-        message: "Self-referral is not allowed!",
-      });
+      if (!checkReferCode) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Invalid referral code!",
+        });
+      }
+
+      if (
+        checkReferCode.referCode === referedBy &&
+        checkReferCode.email === tokenInfo.email
+      ) {
+        return res.status(403).json({
+          status: "failed",
+          message: "Self-referral is not allowed!",
+        });
+      }
+
+      referedById = checkReferCode.id;
     }
 
     if (checkEmailExists) {
@@ -105,7 +112,7 @@ const initiateGoogle = async (req, res) => {
         const token = jwt.sign(
           { id: checkEmailExists.id },
           process.env.JWT_SECRET,
-          { expiresIn: "7d" } 
+          { expiresIn: "7d" }
         );
 
         return res.status(200).json({
@@ -121,7 +128,7 @@ const initiateGoogle = async (req, res) => {
         email: tokenInfo.email,
         mobileNumber,
         profilePic: tokenInfo.picture,
-        referedBy: checkReferCode.id, 
+        referedBy: referedById || "huntcash",
         referCode,
       });
       await sendVerifyCode(mobileNumber, google_token, res, sms_hash);
@@ -137,8 +144,9 @@ const initiateGoogle = async (req, res) => {
 
 export default initiateGoogle;
 
-const sendVerifyCode = async (mobileNumber, google_token, res) => {
+const sendVerifyCode = async (mobileNumber, google_token, res, sms_hash) => {
   try {
+    console.log("here",sms_hash)
     const otpCode = generateOTP();
     const expiresAt = getExpirationDate();
 
@@ -157,7 +165,7 @@ const sendVerifyCode = async (mobileNumber, google_token, res) => {
       expiresAt,
     });
 
-    const sendOtp = await sendCode([mobileNumber], otpCode, sms_hash);
+    const sendOtp = await sendOTP([mobileNumber], otpCode, sms_hash);
 
     if (sendOtp.status === "success" && sendOtp.success) {
       return res.status(201).json({
@@ -172,7 +180,7 @@ const sendVerifyCode = async (mobileNumber, google_token, res) => {
       });
     }
   } catch (error) {
-    console.error("Error during OTP sending:", error.message);
+    console.error("Error during OTP sending:", error);
     return res.status(500).json({
       status: "failed",
       message: "An unexpected error occurred during OTP generation.",
@@ -190,6 +198,6 @@ export const generateReferCode = async () => {
       const randomIndex = Math.floor(Math.random() * characters.length);
       referCode += characters[randomIndex];
     }
-  } while (await User.findOne({ where: { referCode } })); 
+  } while (await User.findOne({ where: { referCode } }));
   return referCode;
 };

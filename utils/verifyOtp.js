@@ -18,7 +18,7 @@ const verifyOtp = async (mobile_number, otp_code) => {
       };
     }
 
-    if (mobile_number.length < 10) {
+    if (mobile_number.length !== 10) {
       return {
         status: "failed",
         success: false,

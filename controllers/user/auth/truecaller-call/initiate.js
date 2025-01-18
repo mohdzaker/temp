@@ -1,11 +1,11 @@
 import User from "../../../../models/User.js";
 import getTokenInfo from "../../../../utils/getTokenInfo.js";
-import { getPhoneNumberDetails } from "../../../../utils/trueCallerUtils.js"; 
+import { getPhoneNumberDetails } from "../../../../utils/trueCallerUtils.js";
 import jwt from "jsonwebtoken";
 
 const initiateTrueCallerCall = async (req, res) => {
   try {
-    const { accessToken, google_token, referedBy } = req.body;
+    const { accessToken, google_token, referedBy = "huntcash" } = req.body;
 
     if (!accessToken || accessToken === "") {
       return res.status(400).json({
@@ -20,14 +20,6 @@ const initiateTrueCallerCall = async (req, res) => {
         status: "failed",
         success: false,
         message: "Please enter a valid Google token!",
-      });
-    }
-
-    if (!referedBy || referedBy.trim() === "") {
-      return res.status(400).json({
-        status: "failed",
-        success: false,
-        message: "Please enter a valid referral code!",
       });
     }
 
@@ -53,25 +45,31 @@ const initiateTrueCallerCall = async (req, res) => {
       });
     }
 
-    const checkReferCode = await User.findOne({
-      where: { referCode: referedBy },
-    });
+    let referedById = null;
 
-    if (!checkReferCode) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid referral code!",
+    if (referedBy && referedBy !== "huntcash") {
+      const checkReferCode = await User.findOne({
+        where: { referCode: referedBy },
       });
-    }
 
-    if (
-      checkReferCode.referCode === referedBy &&
-      checkReferCode.email === tokenInfo.email
-    ) {
-      return res.status(403).json({
-        status: "failed",
-        message: "Self-referral is not allowed!",
-      });
+      if (!checkReferCode) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Invalid referral code!",
+        });
+      }
+
+      if (
+        checkReferCode.referCode === referedBy &&
+        checkReferCode.email === tokenInfo.email
+      ) {
+        return res.status(403).json({
+          status: "failed",
+          message: "Self-referral is not allowed!",
+        });
+      }
+
+      referedById = checkReferCode.id;
     }
 
     const checkUserExists = await User.findOne({
@@ -99,7 +97,7 @@ const initiateTrueCallerCall = async (req, res) => {
         email: tokenInfo.email,
         profilePic: tokenInfo.picture,
         phoneNumber,
-        referedBy: checkReferCode.id,
+        referedBy: referedById || "huntcash",
         referCode,
         isVerified: true,
       });

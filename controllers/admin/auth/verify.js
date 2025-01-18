@@ -1,23 +1,22 @@
 import User from "../../../../models/User.js";
+import Otp from "../../../../models/Otp.js";
 import verifyOtp from "../../../../utils/verifyOtp.js";
 import jwt from "jsonwebtoken";
 
-const verifyGoogle = async (req, res) => {
+const verifyAdminOtp = async (req, res) => {
   try {
-    const { mobileNumber, otpCode } = req.body; 
+    const { mobileNumber, otpCode } = req.body;
 
     if (!mobileNumber || mobileNumber === "") {
       return res.status(400).json({
         status: "failed",
-        success: false,
         message: "Please enter a valid mobile number!",
       });
     }
-console.log(mobileNumber.length)
+
     if (mobileNumber.length !== 10) {
       return res.status(400).json({
         status: "failed",
-        success: false,
         message: "Mobile number should be exactly 10 digits!",
       });
     }
@@ -25,7 +24,6 @@ console.log(mobileNumber.length)
     if (!otpCode || otpCode === "") {
       return res.status(400).json({
         status: "failed",
-        success: false,
         message: "Please enter a valid OTP!",
       });
     }
@@ -35,45 +33,32 @@ console.log(mobileNumber.length)
     if (verifyCode.status === "failed" || !verifyCode.success) {
       return res.status(401).json({
         status: "failed",
-        success: false,
         message: verifyCode.message || "Invalid OTP!",
       });
     }
 
-    const [updatedRows] = await User.update(
-      { isVerified: true }, 
-      { where: { mobileNumber } }
-    );
+    const admin = await User.findOne({
+      where: { mobileNumber, role: "admin" },
+    });
 
-    if (updatedRows > 0) {
-      const user = await User.findOne({ where: { mobileNumber } });
-
-      if (!user) {
-        return res.status(404).json({
-          status: "failed",
-          message: "User not found with that mobile number!",
-        });
-      }
-
-      const token = jwt.sign(
-        { id: user.id },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" } 
-      );
-
-      return res.status(200).json({
-        status: "success",
-        message: "Logged in successfully!",
-        token,
-      });
-    } else {
+    if (!admin) {
       return res.status(404).json({
         status: "failed",
-        message: "User not found with that mobile number!",
+        message: "Admin not found with this mobile number!",
       });
     }
+
+    const token = jwt.sign({ id: admin.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Admin verified successfully!",
+      token,
+    });
   } catch (error) {
-    console.error("Error in verify:", error);
+    console.error("Error in verifyAdminOtp:", error.message);
     return res.status(500).json({
       status: "failed",
       message: error.message || "An unexpected error occurred.",
@@ -81,4 +66,4 @@ console.log(mobileNumber.length)
   }
 };
 
-export default verifyGoogle;
+export default verifyAdminOtp;

@@ -35,13 +35,13 @@ const User = sequelize.define("User", {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },
-    role: {
-        type: Sequelize.STRING,
-        defaultValue: "user"
-    },
     isBanned: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
+    },
+    balance: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     }
 }); 
 

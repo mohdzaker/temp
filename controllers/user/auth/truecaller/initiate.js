@@ -20,7 +20,6 @@ const fetchToken = async (authorizationCode, codeVerifier) => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       }
     );
-
     return {
       status: "success",
       message: "Token fetched successfully!",
@@ -59,34 +58,38 @@ const fetchUserInfo = async (accessToken) => {
 
 const initiateTrueCaller = async (req, res) => {
   try {
-    const { authorizationCode, codeVerifier, referedBy } = req.body;
+    const {
+      authorizationCode,
+      codeVerifier,
+      referedBy = "huntcash",
+    } = req.body;
 
-    if (!authorizationCode?.trim()) {
+    if (!authorizationCode) {
       return res
         .status(400)
         .json({ status: "failed", message: "Authorization code is required!" });
     }
 
-    if (!codeVerifier?.trim()) {
+    if (!codeVerifier) {
       return res
         .status(400)
         .json({ status: "failed", message: "Code verifier is required!" });
     }
 
-    if (!referedBy?.trim()) {
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Referral code is required!" });
-    }
+    let referedById = null;
 
-    const checkReferCode = await User.findOne({
-      where: { referCode: referedBy },
-    });
+    if (referedBy && referedBy !== "huntcash") {
+      const checkReferCode = await User.findOne({
+        where: { referCode: referedBy },
+      });
 
-    if (!checkReferCode) {
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Invalid referral code!" });
+      if (!checkReferCode) {
+        return res
+          .status(400)
+          .json({ status: "failed", message: "Invalid referral code!" });
+      }
+
+      referedById = checkReferCode.id;
     }
 
     const fetchAccessToken = await fetchToken(authorizationCode, codeVerifier);
@@ -127,7 +130,7 @@ const initiateTrueCaller = async (req, res) => {
         email,
         mobileNumber: phone_number,
         profilePic: picture,
-        referedBy: checkReferCode.id,
+        referedBy: referedById || "huntcash", // Default to "huntcash" if no valid referedBy
         referCode,
         isVerified: true,
       });

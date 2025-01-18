@@ -17,7 +17,7 @@ const Otp = sequelize.define("Otp", {
     },
     google_token: {
         type: Sequelize.STRING,
-        allowNull:false
+        defaultValue: null
     },
     isUsed: {
         type: Sequelize.BOOLEAN,
