@@ -5,6 +5,7 @@ import authAdmin from "../middlewares/authAdmin.js";
 import setConfig from "../controllers/admin/config/index.js";
 import { addOffer, deleteOffer, editOffer, getAllOffers } from "../controllers/admin/offer/index.js";
 import { addEvent, editEvent, getAllOffersWithEvents, getOfferByIdWithEvents } from "../controllers/admin/event/index.js";
+import getPendingWithdraw from "../controllers/admin/payout/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -610,6 +611,78 @@ adminRouter.post("/event/get-all-offers", getAllOffersWithEvents);
  */
 
 adminRouter.post("/event/get-offer", getOfferByIdWithEvents);
+/**
+ * @swagger
+ * /api/admin/manual-payout:
+ *   post:
+ *     summary: Get the pending withdrawals for manual payout
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of withdrawals per page
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved pending withdrawals
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       user_id:
+ *                         type: integer
+ *                         example: 101
+ *                       amount:
+ *                         type: number
+ *                         format: float
+ *                         example: 200.00
+ *                       status:
+ *                         type: string
+ *                         example: "processing"
+ *                       time:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-01-20T12:34:56Z"
+ *                 total:
+ *                   type: integer
+ *                   example: 5
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 2
+ *       401:
+ *         description: Unauthorized - Admin is not authenticated
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.post("/manual-payout", authAdmin, getPendingWithdraw);
 
 
 export default adminRouter;
