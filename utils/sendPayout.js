@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from "axios";
 
 export async function sendPayout(name, upi, amount, comment, orderId) {
     const url = "https://payout.pe2pe.in/Pe2Pe/v2/";
