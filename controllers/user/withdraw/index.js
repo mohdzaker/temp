@@ -1,6 +1,7 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
+import { generateOrderId, sendPayout } from "../../../utils/sendPayout.js";
 
 const withdraw = async (req, res) => {
   try {
@@ -47,7 +48,26 @@ const withdraw = async (req, res) => {
       { balance: newBalance },
       { where: { id: user } }
     );
-
+    const order_id = generateOrderId();
+    if(amount < 100){
+      const sendPayoutToUser = await sendPayout(checkUserBalance.username, upi_id, amount, order_id);
+      if(sendPayoutToUser.status === "failed"){
+        await Withdraw.create({
+          user_id: user,
+          upi_id,
+          amount,
+          time: new Date(),
+        })
+      }else{
+        await Withdraw.create({
+          user_id: user,
+          upi_id,
+          amount,
+          time: new Date(),
+          status: "processing",
+        })
+      }
+    }
     const newWithdraw = await Withdraw.create({
       user_id: user,
       upi_id,
