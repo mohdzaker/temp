@@ -1,7 +1,10 @@
+import Decimal from "decimal.js";
 import Click from "../../../models/Click.js";
+import Config from "../../../models/Config.js";
 import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
 import User from "../../../models/User.js";
+import Transaction from "../../../models/Transaction.js";
 
 const handlePostback = async (req, res) => {
   try {
@@ -98,6 +101,37 @@ const handlePostback = async (req, res) => {
 
     user.balance += checkEventExists.event_amount;
     await user.save();
+    await Transaction.create({
+      user_id: checkClickHash.user_id,
+      amount: checkEventExists.event_amount,
+      description: "Event Completion",
+    })
+    const config = await Config.findOne({
+      where: { id: 1 },
+    });
+    const getPercentage = (amount, percentage) => {
+      let number = new Decimal(amount);
+      let newAmout = new Decimal(number.dividedBy(100)).times(
+        new Decimal(percentage)
+      );
+      return +newAmout;
+    }
+    const refer_percentage = config.per_refer;
+    const referrer_amount = getPercentage(checkEventExists.event_amount, refer_percentage);
+    const referrer = user.referedBy;
+    const referrerUser = await User.findOne({
+      where: { id: referrer },
+    });
+    if (referrer && referrerUser) {
+      referrerUser.balance += referrer_amount;
+      await referrerUser.save();
+    }
+
+    await Transaction.create({
+      user_id: referrer,
+      amount: referrer_amount,
+      description: "Refer Commission"
+    });
 
     const allEventsInCampaign = await Event.findAll({
       where: { campaign_id: checkClickHash.campaign_id },

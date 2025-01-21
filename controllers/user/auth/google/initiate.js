@@ -68,7 +68,7 @@ const initiateGoogle = async (req, res) => {
     }
 
     const checkEmailExists = await User.findOne({
-      where: { email: tokenInfo.email },
+      where: { email: tokenInfo.payload.email },
     });
 
     let referedById = null;
@@ -87,7 +87,7 @@ const initiateGoogle = async (req, res) => {
 
       if (
         checkReferCode.referCode === referedBy &&
-        checkReferCode.email === tokenInfo.email
+        checkReferCode.email === tokenInfo.payload.email
       ) {
         return res.status(403).json({
           status: "failed",
@@ -137,10 +137,10 @@ const initiateGoogle = async (req, res) => {
     } else {
       const referCode = await generateReferCode();
       const newUser = await User.create({
-        username: tokenInfo.name,
-        email: tokenInfo.email,
+        username: tokenInfo.payload.name,
+        email: tokenInfo.payload.email,
         mobileNumber,
-        profilePic: tokenInfo.picture,
+        profilePic: tokenInfo.payload.picture,
         referedBy: referedById || "huntcash",
         referCode,
       });

@@ -146,7 +146,20 @@ const initiateTrueCaller = async (req, res) => {
         referCode,
         isVerified: true,
       });
+      const user = User.findOne({
+        where: {
+          mobileNumber: phone_number,
+          email,
+        }
+      });
+      user.balance += user.balance + 5;
+      await user.save();
 
+      await Transaction.create({
+        user_id: user.id,
+        amount: 5,
+        description: "Signup bonus",
+      });
       const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });

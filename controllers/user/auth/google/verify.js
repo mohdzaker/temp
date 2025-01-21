@@ -1,10 +1,11 @@
+import Transaction from "../../../../models/Transaction.js";
 import User from "../../../../models/User.js";
 import verifyOtp from "../../../../utils/verifyOtp.js";
 import jwt from "jsonwebtoken";
 
 const verifyGoogle = async (req, res) => {
   try {
-    const { mobileNumber, otpCode } = req.body; 
+    const { mobileNumber, otpCode } = req.body;
 
     if (!mobileNumber || mobileNumber === "") {
       return res.status(400).json({
@@ -13,7 +14,7 @@ const verifyGoogle = async (req, res) => {
         message: "Please enter a valid mobile number!",
       });
     }
-console.log(mobileNumber.length)
+    console.log(mobileNumber.length);
     if (mobileNumber.length > 10) {
       return res.status(400).json({
         status: "failed",
@@ -41,7 +42,7 @@ console.log(mobileNumber.length)
     }
 
     const [updatedRows] = await User.update(
-      { isVerified: true }, 
+      { isVerified: true },
       { where: { mobileNumber } }
     );
 
@@ -54,18 +55,23 @@ console.log(mobileNumber.length)
           message: "User not found with that mobile number!",
         });
       }
+      user.balance += user.balance + 5;
+      await user.save();
 
-      const token = jwt.sign(
-        { id: user.id },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" } 
-      );
+      await Transaction.create({
+        user_id: user.id,
+        amount: 5,
+        description: "Signup bonus",
+      });
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
 
       return res.status(200).json({
         status: "success",
         message: "Logged in successfully!",
         token,
-        user
+        user,
       });
     } else {
       return res.status(404).json({

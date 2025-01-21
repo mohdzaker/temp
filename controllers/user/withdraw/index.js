@@ -1,3 +1,4 @@
+import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
 
@@ -53,7 +54,11 @@ const withdraw = async (req, res) => {
       amount,
       time: new Date(),
     });
-
+    await Transaction.create({
+      user_id: user,
+      amount,
+      description: `Withdrawal of ${amount} to UPI ${upi_id}`,
+    })
     return res.json({
       status: "success",
       message: "Withdrawal request created successfully!",
