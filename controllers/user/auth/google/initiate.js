@@ -5,11 +5,13 @@ import { generateOTP, getExpirationDate } from "../../../../utils/index.js";
 import rateLimit from "../../../../utils/rateLimit.js";
 import sendOTP from "../../../../utils/sendOtp.js";
 import jwt from "jsonwebtoken";
+import Referlist from "../../../../models/Referlist.js";  // Import Referlist model
+import Config from "../../../../models/Config.js";
 
 const initiateGoogle = async (req, res) => {
   try {
     const { mobileNumber, google_token, referedBy, sms_hash } = req.body;
-    console.log("sms hash: ", sms_hash)
+    console.log("sms hash: ", sms_hash);
 
     if (!mobileNumber || mobileNumber === "") {
       return res.status(400).json({
@@ -19,7 +21,7 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    if (mobileNumber.length > 10 || mobileNumber.length < 10) {
+    if (mobileNumber.length > 10) {
       return res.status(400).json({
         status: "failed",
         success: false,
@@ -43,8 +45,7 @@ const initiateGoogle = async (req, res) => {
     }
 
     const tokenInfo = await getTokenInfo(google_token);
-    
-    // const tokenInfo = {
+    //    const tokenInfo = {
     //   iss: 'https://accounts.google.com',
     //   azp: '978014925661-mnl4nvrta816q5lu5b28f24s1ntvhibe.apps.googleusercontent.com',
     //   aud: '978014925661-hklnq6kjm59v1gjjh7oja74ef087nfck.apps.googleusercontent.com',
@@ -58,7 +59,6 @@ const initiateGoogle = async (req, res) => {
     //   iat: 1737005650,
     //   exp: 1737009250
     // }
-
     if (tokenInfo?.status === "failed") {
       return res.status(401).json({
         status: "failed",
@@ -95,7 +95,20 @@ const initiateGoogle = async (req, res) => {
         });
       }
 
+      const config = await Config.findOne({
+        where: {
+          id: 1
+        }
+      });
+
       referedById = checkReferCode.id;
+
+      await Referlist.create({
+        user_id: checkReferCode.id, 
+        referred_user_id: referedById,
+        referal_name: checkReferCode.username, 
+        referal_amount: config.per_refer,
+      });
     }
 
     if (checkEmailExists) {
@@ -123,7 +136,7 @@ const initiateGoogle = async (req, res) => {
       }
     } else {
       const referCode = await generateReferCode();
-      await User.create({
+      const newUser = await User.create({
         username: tokenInfo.name,
         email: tokenInfo.email,
         mobileNumber,
@@ -131,6 +144,17 @@ const initiateGoogle = async (req, res) => {
         referedBy: referedById || "huntcash",
         referCode,
       });
+      
+      // Record the referral in Referlist when a new user is created
+      if (referedById) {
+        await Referlist.create({
+          user_id: referedById,
+          referred_user_id: newUser.id,
+          referal_name: newUser.username,
+          referal_amount: 100, // Example referral amount
+        });
+      }
+
       await sendVerifyCode(mobileNumber, google_token, res, sms_hash);
     }
   } catch (error) {

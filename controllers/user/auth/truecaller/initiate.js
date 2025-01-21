@@ -2,20 +2,23 @@ import axios from "axios";
 import User from "../../../../models/User.js";
 import jwt from "jsonwebtoken";
 import { generateReferCode } from "../google/initiate.js";
+import Referlist from "../../../../models/Referlist.js";
 
 const fetchToken = async (authorizationCode, codeVerifier) => {
   try {
     const clientId = process.env.TRUECALLER_CLIENT_ID;
     const url = "https://oauth-account-noneu.truecaller.com/v1/token";
 
+    const params = new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: clientId,
+      code:authorizationCode,
+      code_verifier: codeVerifier,
+    });
+
     const response = await axios.post(
       url,
-      new URLSearchParams({
-        grant_type: "authorization_code",
-        client_id: clientId,
-        code: authorizationCode,
-        code_verifier: codeVerifier,
-      }),
+      params.toString(),
       {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       }
@@ -90,6 +93,15 @@ const initiateTrueCaller = async (req, res) => {
       }
 
       referedById = checkReferCode.id;
+
+      referedById = checkReferCode.id;
+
+      await Referlist.create({
+        user_id: checkReferCode.id,
+        referred_user_id: referedById,
+        referal_name: checkReferCode.username,
+        referal_amount: config.per_refer,
+      });
     }
 
     const fetchAccessToken = await fetchToken(authorizationCode, codeVerifier);

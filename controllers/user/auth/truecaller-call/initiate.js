@@ -1,3 +1,4 @@
+import Referlist from "../../../../models/Referlist.js";
 import User from "../../../../models/User.js";
 import getTokenInfo from "../../../../utils/getTokenInfo.js";
 import { getPhoneNumberDetails } from "../../../../utils/trueCallerUtils.js";
@@ -70,6 +71,13 @@ const initiateTrueCallerCall = async (req, res) => {
       }
 
       referedById = checkReferCode.id;
+
+      await Referlist.create({
+        user_id: checkReferCode.id, 
+        referred_user_id: referedById,
+        referal_name: checkReferCode.username, 
+        referal_amount: config.per_refer,
+      });
     }
 
     const checkUserExists = await User.findOne({

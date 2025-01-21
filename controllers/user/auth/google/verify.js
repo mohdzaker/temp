@@ -14,7 +14,7 @@ const verifyGoogle = async (req, res) => {
       });
     }
 console.log(mobileNumber.length)
-    if (mobileNumber.length !== 10) {
+    if (mobileNumber.length > 10) {
       return res.status(400).json({
         status: "failed",
         success: false,
@@ -65,6 +65,7 @@ console.log(mobileNumber.length)
         status: "success",
         message: "Logged in successfully!",
         token,
+        user
       });
     } else {
       return res.status(404).json({
