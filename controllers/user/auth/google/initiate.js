@@ -112,7 +112,7 @@ const initiateGoogle = async (req, res) => {
     }
 
     if (checkEmailExists) {
-      if (mobileNumber !== checkEmailExists.mobileNumber) {
+      if (mobileNumber != checkEmailExists.mobileNumber) {
         return res.status(400).json({
           status: "failed",
           message: "Email is already registered with another mobile number!",
