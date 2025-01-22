@@ -10,6 +10,7 @@ import getReferHistory from "../controllers/user/refer-history/index.js";
 import clickHandler from "../controllers/user/click/index.js";
 import handlePostback from "../controllers/user/postback/index.js";
 import getTransactions from "../controllers/user/transaction-history/index.js";
+import getWithdrawHistory from "../controllers/user/withdraw-history/index.js";
 
 const userRouter = express.Router();
 /**
@@ -989,5 +990,75 @@ userRouter.get("/postback", handlePostback);
  */
 
 userRouter.get("/transaction-history",authUser, getTransactions);
+/**
+ * @swagger
+ * /api/user/withdraw-history:
+ *   get:
+ *     summary: Retrieve the withdrawal history of the authenticated user
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of withdrawal records per page
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved withdrawal history
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       user_id:
+ *                         type: integer
+ *                         example: 123
+ *                       amount:
+ *                         type: number
+ *                         format: float
+ *                         example: 150.00
+ *                       status:
+ *                         type: string
+ *                         example: "completed"
+ *                       time:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-01-21T10:15:30Z"
+ *                 currentPage:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *                 totalRecords:
+ *                   type: integer
+ *                   example: 50
+ *       401:
+ *         description: Unauthorized - User is not authenticated
+ *       500:
+ *         description: Internal server error
+ */
+
+userRouter.get("/withdraw-history",authUser, getWithdrawHistory);
 
 export default userRouter;
