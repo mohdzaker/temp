@@ -30,10 +30,4 @@ const EventHistory = sequelize.define("EventHistory", {
   },
 });
 
-// Define the association
-EventHistory.belongsTo(Click, {
-  foreignKey: "clickHash",
-  targetKey: "clickHash",
-});
-
 export default EventHistory;

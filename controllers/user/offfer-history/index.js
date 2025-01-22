@@ -1,32 +1,21 @@
-import Click from "../../../models/Click.js";
-import EventHistory from "../../../models/EventHistory.js";
-
-Click.hasMany(EventHistory, {
-    foreignKey: "clickHash",
-    sourceKey: "clickHash",
-    as: "eventHistory", 
-});
-
-EventHistory.belongsTo(Click, {
-    foreignKey: "clickHash",
-    targetKey: "clickHash",
-});
+import { Click, EventHistory } from "../../../models/index.js";
 
 const getOfferHistory = async (req, res) => {
   try {
-    const user_id = req.user.id; 
+    const user_id = req.user.id; // Logged-in user's ID
     const { page = 1, limit = 10 } = req.query; 
 
     const offset = (page - 1) * limit;
 
+    // Fetch data with associations
     const { rows, count } = await Click.findAndCountAll({
       where: { user_id },
       include: [
         {
           model: EventHistory,
-          as: "eventHistory",
+          as: "eventHistory", // Alias defined in the association
           where: { user_id }, 
-          required: false, 
+          required: false, // Optional join
         },
       ],
       order: [["id", "DESC"]],

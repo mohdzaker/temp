@@ -1,6 +1,5 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
-import EventHistory from "./EventHistory.js"; // Import EventHistory model
 
 const Click = sequelize.define("Click", {
   id: {
@@ -30,11 +29,6 @@ const Click = sequelize.define("Click", {
   browser_type: Sequelize.STRING,
 });
 
-// Define the association
-Click.hasMany(EventHistory, {
-  foreignKey: "clickHash",
-  sourceKey: "clickHash",
-  as: "eventHistory",
-});
+
 
 export default Click;
