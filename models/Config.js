@@ -22,6 +22,10 @@ const Config = sequelize.define('Config', {
     minimum_withdraw: {
         type: Sequelize.INTEGER,
         allowNull: false
+    },
+    invite_link_template: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 

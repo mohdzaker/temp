@@ -31,6 +31,10 @@ const Referlist = sequelize.define("Referlist", {
     type: Sequelize.DECIMAL(10, 2),  // Changed to DECIMAL for precision
     allowNull: false,
   },
+  refer_commission:{
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  }
 }, {
   indexes: [
     { fields: ['user_id'] },

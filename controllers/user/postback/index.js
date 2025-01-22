@@ -5,6 +5,7 @@ import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
 import User from "../../../models/User.js";
 import Transaction from "../../../models/Transaction.js";
+import Referlist from "../../../models/Referlist.js";
 
 const handlePostback = async (req, res) => {
   try {
@@ -126,7 +127,17 @@ const handlePostback = async (req, res) => {
       referrerUser.balance += referrer_amount;
       await referrerUser.save();
     }
+    const referedUser = await Referlist.findOne({
+      where: {
+        user_id: referrerUser.id,
+        referred_user_id: user_id
+      }
+    });
 
+    if (referedUser) {
+      referedUser.refer_commission += referedUser + referrer_amount;
+      await referedUser.save();
+    }
     await Transaction.create({
       user_id: referrer,
       amount: referrer_amount,

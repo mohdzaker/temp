@@ -2,7 +2,7 @@ import Config from "../../../models/Config.js";
 
 const setConfig = async (req, res) => {
   try {
-    const { invite_rules, withdraw_rules, per_refer, minimum_withdraw } =
+    const { invite_rules, withdraw_rules, per_refer, minimum_withdraw, invite_link_template } =
       req.body;
 
       if(!invite_rules){
@@ -37,6 +37,12 @@ const setConfig = async (req, res) => {
         });
       }
 
+      if(!invite_link_template){
+        return res.status(400).json({
+          status: "failed",
+          message: "Please provide invite link template!",
+        });
+      }
       const isRowExist = await Config.findOne({
         where: { id: 1 },
       });
@@ -48,6 +54,7 @@ const setConfig = async (req, res) => {
             withdraw_rules,
             per_refer,
             minimum_withdraw,
+            invite_link_template
           },
           { where: { id: 1 } }
         );
@@ -57,6 +64,7 @@ const setConfig = async (req, res) => {
           withdraw_rules,
           per_refer,
           minimum_withdraw,
+          invite_link_template,
         });
       }
 
