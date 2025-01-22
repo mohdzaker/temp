@@ -651,7 +651,7 @@ userRouter.post("/profile", authUser, getUserProfile);
  * @swagger
  * /api/user/refer-history:
  *   post:
- *     summary: Retrieve the referral history for the authenticated user
+ *     summary: Retrieve the referral history and total commission for the authenticated user
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -670,7 +670,7 @@ userRouter.post("/profile", authUser, getUserProfile);
  *         description: The number of records per page
  *     responses:
  *       200:
- *         description: Successfully retrieved referral history
+ *         description: Successfully retrieved referral history and total commission
  *         content:
  *           application/json:
  *             schema:
@@ -690,6 +690,9 @@ userRouter.post("/profile", authUser, getUserProfile);
  *                       user_id:
  *                         type: integer
  *                         example: 123
+ *                       refer_commission:
+ *                         type: number
+ *                         example: 10.5
  *                       referred_user:
  *                         type: object
  *                         properties:
@@ -708,6 +711,9 @@ userRouter.post("/profile", authUser, getUserProfile);
  *                           profilePic:
  *                             type: string
  *                             example: "/path/to/profile-pic.jpg"
+ *                 totalCommission:
+ *                   type: number
+ *                   example: 150.75
  *                 pagination:
  *                   type: object
  *                   properties:

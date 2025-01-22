@@ -18,8 +18,14 @@ const getReferHistory = async (req, res) => {
         status: "success",
         message: "No referrals found.",
         data: [],
+        totalCommission: 0, // Add totalCommission in case of no referrals
       });
     }
+
+    // Calculate total commission earned
+    const totalCommission = await Referlist.sum("refer_commission", {
+      where: { user_id },
+    });
 
     // Fetch referrals with pagination
     const referrals = await Referlist.findAll({
@@ -40,6 +46,7 @@ const getReferHistory = async (req, res) => {
     return res.json({
       status: "success",
       data: referrals,
+      totalCommission, // Include total commission in the response
       pagination: {
         currentPage: parseInt(page),
         totalPages,
