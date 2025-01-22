@@ -1,16 +1,16 @@
+import Referlist from "../../../models/Referlist.js";
 import User from "../../../models/User.js";
 
 const getReferHistory = async (req, res) => {
   try {
-    const user_id = req.user.id; 
+    const user_id = req.user.id; // Logged-in user's ID
 
     const { page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit; 
+    const offset = (page - 1) * limit; // Calculate offset for pagination
 
-    const totalReferrals = await User.count({
-      where: {
-        referedBy: user_id,
-      },
+    // Count total referrals for the user
+    const totalReferrals = await Referlist.count({
+      where: { user_id },
     });
 
     if (totalReferrals === 0) {
@@ -21,13 +21,18 @@ const getReferHistory = async (req, res) => {
       });
     }
 
-    const referrals = await User.findAll({
-      where: {
-        referedBy: user_id,
-      },
+    // Fetch referrals with pagination
+    const referrals = await Referlist.findAll({
+      where: { user_id },
       offset,
       limit: parseInt(limit),
-      attributes: ["id", "username", "email", "mobileNumber", "profilePic"],
+      include: [
+        {
+          model: User,
+          as: "ReferredUser", // Ensure you set up the alias in the association
+          attributes: ["id", "username", "email", "mobileNumber", "profilePic"],
+        },
+      ],
     });
 
     const totalPages = Math.ceil(totalReferrals / limit);

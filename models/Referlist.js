@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
+import User from "./User.js"; // Import the User model
 
 const Referlist = sequelize.define("Referlist", {
   id: {
@@ -11,7 +12,7 @@ const Referlist = sequelize.define("Referlist", {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: "User",  // Refers to the User model
+      model: "User", // Refers to the User model
       key: "id",
     },
   },
@@ -19,7 +20,7 @@ const Referlist = sequelize.define("Referlist", {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: "User",  // Refers to the User model
+      model: "User", // Refers to the User model
       key: "id",
     },
   },
@@ -28,18 +29,21 @@ const Referlist = sequelize.define("Referlist", {
     allowNull: false,
   },
   referal_amount: {
-    type: Sequelize.DECIMAL(10, 2),  // Changed to DECIMAL for precision
+    type: Sequelize.DECIMAL(10, 2), // Changed to DECIMAL for precision
     allowNull: false,
   },
-  refer_commission:{
+  refer_commission: {
     type: Sequelize.INTEGER,
-    defaultValue: 0
-  }
+    defaultValue: 0,
+  },
 }, {
   indexes: [
-    { fields: ['user_id'] },
-    { fields: ['referred_user_id'] },
+    { fields: ["user_id"] },
+    { fields: ["referred_user_id"] },
   ],
 });
+
+// Define the association between Referlist and User
+Referlist.belongsTo(User, { foreignKey: "referred_user_id", as: "ReferredUser" });
 
 export default Referlist;

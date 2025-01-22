@@ -649,10 +649,10 @@ userRouter.post("/withdraw", authUser, withdraw);
 userRouter.post("/profile", authUser, getUserProfile);
 /**
  * @swagger
- * /api/user/refers:
+ * /api/user/refer-history:
  *   post:
- *     tags: [Referrals]
- *     summary: Get the referral history for the authenticated user
+ *     summary: Retrieve the referral history for the authenticated user
+ *     tags: [User]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -667,10 +667,10 @@ userRouter.post("/profile", authUser, getUserProfile);
  *         schema:
  *           type: integer
  *           default: 10
- *         description: The number of referrals to return per page
+ *         description: The number of records per page
  *     responses:
  *       200:
- *         description: Referral history fetched successfully
+ *         description: Successfully retrieved referral history
  *         content:
  *           application/json:
  *             schema:
@@ -686,71 +686,47 @@ userRouter.post("/profile", authUser, getUserProfile);
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: Referral user ID
- *                         example: 2
- *                       username:
- *                         type: string
- *                         description: Username of the referred user
- *                         example: jane_doe
- *                       email:
- *                         type: string
- *                         description: Email address of the referred user
- *                         example: jane@example.com
- *                       mobileNumber:
- *                         type: string
- *                         description: Mobile number of the referred user
- *                         example: "+1234567890"
- *                       profilePic:
- *                         type: string
- *                         description: URL of the referred user's profile picture
- *                         example: "https://example.com/profile.jpg"
+ *                         example: 1
+ *                       user_id:
+ *                         type: integer
+ *                         example: 123
+ *                       referred_user:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                             example: 456
+ *                           username:
+ *                             type: string
+ *                             example: "john_doe"
+ *                           email:
+ *                             type: string
+ *                             example: "johndoe@example.com"
+ *                           mobileNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           profilePic:
+ *                             type: string
+ *                             example: "/path/to/profile-pic.jpg"
  *                 pagination:
  *                   type: object
  *                   properties:
  *                     currentPage:
  *                       type: integer
- *                       description: The current page number
  *                       example: 1
  *                     totalPages:
  *                       type: integer
- *                       description: The total number of pages
  *                       example: 5
  *                     totalItems:
  *                       type: integer
- *                       description: The total number of referrals
  *                       example: 50
- *       404:
- *         description: No referrals found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 message:
- *                   type: string
- *                   example: No referrals found.
- *                 data:
- *                   type: array
- *                   example: []
+ *       401:
+ *         description: Unauthorized - User is not authenticated
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: failed
- *                 message:
- *                   type: string
- *                   example: Something went wrong!
  */
 
-userRouter.post("/refers", authUser, getReferHistory);
+userRouter.post("/refer-history", authUser, getReferHistory);
 /**
  * @swagger
  * /api/user/click:
