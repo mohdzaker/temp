@@ -1,7 +1,7 @@
 import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js";
+import Event from "../../../models/Event.js";
 import { Sequelize } from "sequelize";
-// Initialize associations
 Offer.associate({ Click });
 Click.associate({ Offer });
 const getOffers = async (req, res) => {
@@ -26,6 +26,15 @@ const getOffers = async (req, res) => {
                         status: { [Sequelize.Op.ne]: "completed" }, 
                     },
                 },
+                {
+                    model: Event,
+                    as: "events",
+                    required: false,
+                    where: {
+                        status: "active"
+                    },
+                    attributes: ["id", "event_title", "event_short_desc", "event_amount", "status"]
+                }
             ],
             offset,
             limit: parseInt(limit),
