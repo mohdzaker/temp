@@ -1,22 +1,34 @@
-import { Click, EventHistory } from "../../../models/index.js";
+import EventHistory from "../../../models/EventHistory.js"
+import Offer from "../../../models/Offer.js";
+import Click from "../../../models/Click.js"
 
 const getOfferHistory = async (req, res) => {
   try {
-    const user_id = req.user.id; // Logged-in user's ID
+    const user_id = req.user.id;
     const { page = 1, limit = 10 } = req.query; 
 
     const offset = (page - 1) * limit;
 
-    // Fetch data with associations
     const { rows, count } = await Click.findAndCountAll({
       where: { user_id },
       include: [
         {
           model: EventHistory,
-          as: "eventHistory", // Alias defined in the association
-          where: { user_id }, 
-          required: false, // Optional join
+          as: "eventHistory",
+          required: false,
         },
+        {
+          model: Offer,
+          as: "campaign",
+          attributes: [
+            'id', 
+            'campaign_name', 
+            'short_description', 
+            'tracking_link', 
+            'campaign_logo', 
+            'status'
+          ]
+        }
       ],
       order: [["id", "DESC"]],
       limit: parseInt(limit),
@@ -32,7 +44,7 @@ const getOfferHistory = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.json({
+    res.status(500).json({
       status: "failed",
       message: "Failed to get offer history",
     });

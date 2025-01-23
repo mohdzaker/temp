@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
-import Click from "./Click.js"; // Import Click model
+import Offer from "./Offer.js";
 
-const EventHistory = sequelize.define("EventHistory", {
+const EventHistory = sequelize.define('EventHistory', {
   id: {
     type: Sequelize.INTEGER(11),
     primaryKey: true,
@@ -18,7 +18,10 @@ const EventHistory = sequelize.define("EventHistory", {
   },
   campaign_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    references: {
+      model: Offer,
+      key: 'id'
+    }
   },
   event_id: {
     type: Sequelize.INTEGER,
@@ -27,7 +30,14 @@ const EventHistory = sequelize.define("EventHistory", {
   status: {
     type: Sequelize.STRING,
     allowNull: false,
-  },
+  }
 });
+
+EventHistory.associate = (models) => {
+  EventHistory.belongsTo(models.Offer, { 
+    foreignKey: 'campaign_id', 
+    as: 'campaign' 
+  });
+};
 
 export default EventHistory;
