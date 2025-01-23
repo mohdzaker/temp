@@ -7,19 +7,12 @@ import useragent from "useragent";
 const clickHandler = async (req, res) => {
   try {
     const user_id = req.user.id;
-    const { campaign_id, event_id } = req.body;
+    const { campaign_id } = req.body;
 
     if (!campaign_id) {
       return res.json({
         status: "failed",
         message: "Campaign ID is required!",
-      });
-    }
-
-    if (!event_id) {
-      return res.json({
-        status: "failed",
-        message: "Event ID is required!",
       });
     }
 
@@ -43,26 +36,6 @@ const clickHandler = async (req, res) => {
       });
     }
 
-    const checkEventExists = await Event.findOne({
-      where: {
-        id: event_id,
-        campaign_id,
-      },
-    });
-
-    if (!checkEventExists) {
-      return res.json({
-        status: "failed",
-        message: "Event not found in this campaign!",
-      });
-    }
-
-    if(checkEventExists.status === "inactive"){
-      return res.json({
-        status: "failed",
-        message: "Event is inactive!",
-      });
-    }
 
     const ipAddress =
       req.ip ||
