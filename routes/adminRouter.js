@@ -139,21 +139,6 @@ adminRouter.post("/auth/login", adminLogin);
  *                 type: number
  *                 description: The minimum withdrawal amount.
  *                 example: 50
- *               policy_url:
- *                 type: string
- *                 description: policy_url
- *               teams_url:
- *                 type: string
- *                 description: teams_url
- *               banner_link:
- *                 type: string
- *                 description: banner_link
- *               banner_onclick_url:
- *                 type: string
- *                 description: banner_onclick_url
- *               contact_email:
- *                 type: string
- *                 description: contact_email
  *     responses:
  *       200:
  *         description: Config updated successfully
