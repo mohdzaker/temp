@@ -1,6 +1,9 @@
 import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js";
-
+import { Sequelize } from "sequelize";
+// Initialize associations
+Offer.associate({ Click });
+Click.associate({ Offer });
 const getOffers = async (req, res) => {
     try {
         const user_id = req.user.id;
