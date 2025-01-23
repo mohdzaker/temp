@@ -1,8 +1,5 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
-import Offer from "./Offer.js";
-
-Click.belongsTo(Offer, { foreignKey: "campaign_id", as: "campaign" });
 
 const Click = sequelize.define("Click", {
   id: {
@@ -32,6 +29,9 @@ const Click = sequelize.define("Click", {
   browser_type: Sequelize.STRING,
 });
 
-
+// Use lazy import to resolve circular dependency
+Click.associate = (models) => {
+  Click.belongsTo(models.Offer, { foreignKey: "campaign_id", as: "campaign" });
+};
 
 export default Click;

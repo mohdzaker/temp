@@ -1,8 +1,5 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
-import Click from "./Click.js";
-
-Offer.hasMany(Click, { foreignKey: "campaign_id", as: "clicks" });
 
 const Offer = sequelize.define("Offer", {
   id: {
@@ -31,5 +28,10 @@ const Offer = sequelize.define("Offer", {
     allowNull: false,
   },
 });
+
+// Use lazy import to resolve circular dependency
+Offer.associate = (models) => {
+  Offer.hasMany(models.Click, { foreignKey: "campaign_id", as: "clicks" });
+};
 
 export default Offer;
