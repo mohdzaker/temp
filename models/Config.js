@@ -26,6 +26,26 @@ const Config = sequelize.define('Config', {
     invite_link_template: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    policy_url: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    teams_url: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    banner_link: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    banner_onclick_url: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    contact_email: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 

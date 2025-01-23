@@ -2,7 +2,7 @@ import Config from "../../../models/Config.js";
 
 const setConfig = async (req, res) => {
   try {
-    const { invite_rules, withdraw_rules, per_refer, minimum_withdraw, invite_link_template } =
+    const { invite_rules, withdraw_rules, per_refer, minimum_withdraw, invite_link_template, policy_url, teams_url, banner_link, banner_onclick_url, contact_email } =
       req.body;
 
       if(!invite_rules){
@@ -43,6 +43,41 @@ const setConfig = async (req, res) => {
           message: "Please provide invite link template!",
         });
       }
+      
+      if(!policy_url){
+        return res.status(400).json({
+          status: "failed",
+          message: "Please provide policy URL!",
+        });
+      }
+      
+      if(!teams_url){
+        return res.status(400).json({
+          status: "failed",
+          message: "Please provide teams URL!",
+        });
+      }
+      
+      if(!banner_link){
+        return res.status(400).json({
+          status: "failed",
+          message: "Please provide banner link!",
+        });
+      }
+      
+      if(!banner_onclick_url){
+        return res.status(400).json({
+          status: "failed",
+          message: "Please provide banner onclick URL!",
+        });
+      }
+      
+      if(!contact_email){
+        return res.status(400).json({
+          status: "failed",
+          message: "Please provide contact email!",
+        });
+      }
       const isRowExist = await Config.findOne({
         where: { id: 1 },
       });
@@ -54,7 +89,12 @@ const setConfig = async (req, res) => {
             withdraw_rules,
             per_refer,
             minimum_withdraw,
-            invite_link_template
+            invite_link_template,
+            policy_url,
+            teams_url,
+            banner_link,
+            banner_onclick_url,
+            contact_email,
           },
           { where: { id: 1 } }
         );
@@ -65,6 +105,11 @@ const setConfig = async (req, res) => {
           per_refer,
           minimum_withdraw,
           invite_link_template,
+          policy_url,
+          teams_url,
+          banner_link,
+          banner_onclick_url,
+          contact_email,
         });
       }
 
