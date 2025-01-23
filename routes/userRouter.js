@@ -12,6 +12,7 @@ import handlePostback from "../controllers/user/postback/index.js";
 import getTransactions from "../controllers/user/transaction-history/index.js";
 import getWithdrawHistory from "../controllers/user/withdraw-history/index.js";
 import getOfferHistory from "../controllers/user/offfer-history/index.js";
+import getOffers from "../controllers/user/get-offers/index.js";
 
 const userRouter = express.Router();
 /**
@@ -1122,5 +1123,96 @@ userRouter.get("/withdraw-history",authUser, getWithdrawHistory);
  */
 
 userRouter.get("/offer-history",authUser, getOfferHistory);
+/**
+ * @swagger
+ * /api/user/get-offers:
+ *   get:
+ *     summary: Retrieve active offers with user-specific click status
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of records per page
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved active offers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       campaign_name:
+ *                         type: string
+ *                         example: "Awesome Campaign"
+ *                       short_description:
+ *                         type: string
+ *                         example: "This is a short description of the offer."
+ *                       tracking_link:
+ *                         type: string
+ *                         example: "https://example.com/tracking-link/?click_id={click_id}"
+ *                       campaign_logo:
+ *                         type: string
+ *                         example: "/path/to/logo.jpg"
+ *                       status:
+ *                         type: string
+ *                         example: "active"
+ *                       clicks:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: integer
+ *                               example: 10
+ *                             user_id:
+ *                               type: integer
+ *                               example: 123
+ *                             clickHash:
+ *                               type: string
+ *                               example: "abc123xyz"
+ *                             status:
+ *                               type: string
+ *                               example: "pending"
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     pageSize:
+ *                       type: integer
+ *                       example: 10
+ *                     total:
+ *                       type: integer
+ *                       example: 5
+ *       401:
+ *         description: Unauthorized - User is not authenticated
+ *       500:
+ *         description: Internal server error
+ */
+
+userRouter.get("/get-offers",authUser, getOffers);
 
 export default userRouter;

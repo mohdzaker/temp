@@ -1,5 +1,8 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
+import Click from "./Click.js";
+
+Offer.hasMany(Click, { foreignKey: "campaign_id", as: "clicks" });
 
 const Offer = sequelize.define("Offer", {
   id: {

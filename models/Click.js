@@ -1,5 +1,8 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
+import Offer from "./Offer.js";
+
+Click.belongsTo(Offer, { foreignKey: "campaign_id", as: "campaign" });
 
 const Click = sequelize.define("Click", {
   id: {
