@@ -982,11 +982,24 @@ adminRouter.post("/update-user-ban-status", authAdmin, updateUserBanStatus);
 /**
  * @swagger
  * /api/admin/get-user-by-id:
- *   get:
+ *   post:
  *     summary: Fetch a user by ID
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ * requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID of the user
+ *                 example: 1
  *     responses:
  *       200:
  *         description: User fetched successfully
