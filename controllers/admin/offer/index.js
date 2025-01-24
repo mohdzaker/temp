@@ -250,3 +250,53 @@ export const deleteOffer = async (req, res) => {
     });
   }
 };
+
+
+export const setOfferStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Offer ID is required",
+      });
+    }
+
+    if (!status) {
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Status is required",
+      });
+    }
+    const offer = await Offer.findOne({ where: { id } });
+    if (!offer) {
+      return res.status(404).json({
+        status: "failed",
+        success: false,
+        message: "Offer not found",
+      });
+    }
+
+    await Offer.update(
+      {
+        status,
+      },
+      { where: { id } }
+    );
+
+    return res.json({
+      status:'success',
+      message: 'Offer status updated successfully',
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      status: 'failed',
+      message: 'Failed to set offer status'
+    })
+  }
+}

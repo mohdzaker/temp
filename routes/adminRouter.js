@@ -3,10 +3,11 @@ import adminRegister from "../controllers/admin/auth/register/index.js";
 import adminLogin from "../controllers/admin/auth/login/index.js";
 import authAdmin from "../middlewares/authAdmin.js";
 import setConfig from "../controllers/admin/config/index.js";
-import { addOffer, deleteOffer, editOffer, getAllOffers } from "../controllers/admin/offer/index.js";
+import { addOffer, deleteOffer, editOffer, getAllOffers, setOfferStatus } from "../controllers/admin/offer/index.js";
 import { addEvent, editEvent, getAllOffersWithEvents, getOfferByIdWithEvents } from "../controllers/admin/event/index.js";
 import getPendingWithdraw from "../controllers/admin/payout/index.js";
 import getConfig from "../controllers/admin/get-config/index.js";
+import getUsers, { getUserById, updateUserBanStatus } from "../controllers/admin/get-users/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -766,4 +767,282 @@ adminRouter.post("/manual-payout", authAdmin, getPendingWithdraw);
  */
 
 adminRouter.get("/get-config", authAdmin, getConfig);
+/**
+ * @swagger
+ * /api/admin/set-offer-status:
+ *   post:
+ *     summary: Update the status of an offer
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: The ID of the offer
+ *                 example: 123
+ *               status:
+ *                 type: string
+ *                 description: The new status of the offer (e.g., "active", "inactive")
+ *                 example: "active"
+ *     responses:
+ *       200:
+ *         description: Offer status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Offer status updated successfully
+ *       400:
+ *         description: Missing required parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Offer ID is required"
+ *       404:
+ *         description: Offer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Offer not found"
+ *       500:
+ *         description: Failed to set offer status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to set offer status"
+ */
+
+adminRouter.post("/set-offer-status", authAdmin, setOfferStatus);
+/**
+ * @swagger
+ * /api/admin/get-users:
+ *   get:
+ *     summary: Fetch all users
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Users fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Users fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       username:
+ *                         type: string
+ *                         example: johndoe
+ *                       email:
+ *                         type: string
+ *                         example: johndoe@example.com
+ *                       isBanned:
+ *                         type: boolean
+ *                         example: false
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+adminRouter.get("/get-users", authAdmin, getUsers);
+/**
+ * @swagger
+ * /api/admin/update-user-ban-status:
+ *   post:
+ *     summary: Update a user's ban status
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - isBanned
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID of the user
+ *                 example: 1
+ *               isBanned:
+ *                 type: boolean
+ *                 description: Ban status (true to ban, false to unban)
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: User ban status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: User has been banned successfully
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+adminRouter.get("/ban-unban-user", authAdmin, updateUserBanStatus);
+/**
+ * @swagger
+ * /api/admin/get-user-by-id:
+ *   get:
+ *     summary: Fetch a user by ID
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: User fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     username:
+ *                       type: string
+ *                       example: johndoe
+ *                     email:
+ *                       type: string
+ *                       example: johndoe@example.com
+ *                     isBanned:
+ *                       type: boolean
+ *                       example: false
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+adminRouter.get("/get-user", authAdmin, getUserById);
 export default adminRouter;
