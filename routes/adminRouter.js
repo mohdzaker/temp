@@ -6,6 +6,7 @@ import setConfig from "../controllers/admin/config/index.js";
 import { addOffer, deleteOffer, editOffer, getAllOffers } from "../controllers/admin/offer/index.js";
 import { addEvent, editEvent, getAllOffersWithEvents, getOfferByIdWithEvents } from "../controllers/admin/event/index.js";
 import getPendingWithdraw from "../controllers/admin/payout/index.js";
+import getConfig from "../controllers/admin/get-config/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -698,6 +699,71 @@ adminRouter.post("/event/get-offer", getOfferByIdWithEvents);
  */
 
 adminRouter.post("/manual-payout", authAdmin, getPendingWithdraw);
+/**
+ * @swagger
+ * /api/admin/get-config:
+ *   get:
+ *     summary: Retrieve application configuration
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved configuration
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Configuration fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       invite_rules:
+ *                         type: string
+ *                         example: "Invite your friends and earn rewards"
+ *                       withdraw_rules:
+ *                         type: string
+ *                         example: "Minimum withdrawal amount is $100"
+ *                       per_refer:
+ *                         type: integer
+ *                         example: 10
+ *                       minimum_withdraw:
+ *                         type: integer
+ *                         example: 100
+ *                       invite_link_template:
+ *                         type: string
+ *                         example: "https://example.com/invite?code={code}"
+ *                       policy_url:
+ *                         type: string
+ *                         example: "https://example.com/policy"
+ *                       teams_url:
+ *                         type: string
+ *                         example: "https://example.com/teams"
+ *                       banner_link:
+ *                         type: string
+ *                         example: "/assets/banners/banner1.jpg"
+ *                       banner_onclick_url:
+ *                         type: string
+ *                         example: "https://example.com/banner"
+ *                       contact_email:
+ *                         type: string
+ *                         example: "support@example.com"
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       500:
+ *         description: Failed to fetch configuration
+ */
 
-
+adminRouter.get("/get-config", authAdmin, getConfig);
 export default adminRouter;
