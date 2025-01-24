@@ -44,23 +44,23 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    // const tokenInfo = await getTokenInfo(google_token);
-       const tokenInfo = {
-        payload: {
-          iss: 'https://accounts.google.com',
-          azp: '978014925661-mnl4nvrta816q5lu5b28f24s1ntvhibe.apps.googleusercontent.com',
-          aud: '978014925661-hklnq6kjm59v1gjjh7oja74ef087nfck.apps.googleusercontent.com',
-          sub: '112671659393143187213',
-          email: 'indiangujrati90@gmail.com',
-          email_verified: true,
-          name: 'Oneshot IND',
-          picture: 'https://lh3.googleusercontent.com/a/ACg8ocJl4eSOWGkq8NmbcDAp7w6Ojl-jusiC3mk_YUyBQxXfZyrGNJgF=s96-c',
-          given_name: 'Oneshot',
-          family_name: 'IND',
-          iat: 1737005650,
-          exp: 1737009250
-        }
-       }
+    const tokenInfo = await getTokenInfo(google_token);
+      //  const tokenInfo = {
+      //   payload: {
+      //     iss: 'https://accounts.google.com',
+      //     azp: '978014925661-mnl4nvrta816q5lu5b28f24s1ntvhibe.apps.googleusercontent.com',
+      //     aud: '978014925661-hklnq6kjm59v1gjjh7oja74ef087nfck.apps.googleusercontent.com',
+      //     sub: '112671659393143187213',
+      //     email: 'indiangujrati90@gmail.com',
+      //     email_verified: true,
+      //     name: 'Oneshot IND',
+      //     picture: 'https://lh3.googleusercontent.com/a/ACg8ocJl4eSOWGkq8NmbcDAp7w6Ojl-jusiC3mk_YUyBQxXfZyrGNJgF=s96-c',
+      //     given_name: 'Oneshot',
+      //     family_name: 'IND',
+      //     iat: 1737005650,
+      //     exp: 1737009250
+      //   }
+      //  }
     if (tokenInfo?.status === "failed") {
       return res.status(401).json({
         status: "failed",
@@ -114,7 +114,7 @@ const initiateGoogle = async (req, res) => {
     }
 
     if (checkEmailExists) {
-      if (mobileNumber != checkEmailExists.mobileNumber) {
+      if (checkEmailExists.mobileNumber != mobileNumber.toString()) {
         return res.status(400).json({
           status: "failed",
           message: "Email is already registered with another mobile number!",
