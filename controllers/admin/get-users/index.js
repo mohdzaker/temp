@@ -51,8 +51,8 @@ export const updateUserBanStatus = async (req, res) => {
 
 export const getUserById = async (req, res) => {
     try {
-        const userId = req.user.id; 
-        const user = await User.findByPk(userId); 
+        const { id } = req.body; 
+        const user = await User.findByPk(id); 
         if (!user) {
             return res.status(404).json({
                 status: "failed",
