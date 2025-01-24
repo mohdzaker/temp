@@ -978,7 +978,7 @@ adminRouter.get("/get-users", authAdmin, getUsers);
  *                   example: Internal Server Error
  */
 
-adminRouter.get("/ban-unban-user", authAdmin, updateUserBanStatus);
+adminRouter.post("/update-user-ban-status", authAdmin, updateUserBanStatus);
 /**
  * @swagger
  * /api/admin/get-user-by-id:
@@ -1044,5 +1044,5 @@ adminRouter.get("/ban-unban-user", authAdmin, updateUserBanStatus);
  *                   example: Internal Server Error
  */
 
-adminRouter.get("/get-user", authAdmin, getUserById);
+adminRouter.get("/get-user-by-id", authAdmin, getUserById);
 export default adminRouter;
