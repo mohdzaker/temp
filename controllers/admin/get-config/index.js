@@ -1,4 +1,4 @@
-import Config from "../../../models/Config/.js";
+import Config from "../../../models/Config.js";
 
 const getConfig = async (req, res) => {
     try {
