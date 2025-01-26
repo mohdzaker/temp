@@ -68,12 +68,6 @@ const withdraw = async (req, res) => {
         })
       }
     }
-    const newWithdraw = await Withdraw.create({
-      user_id: user,
-      upi_id,
-      amount,
-      time: new Date(),
-    });
     await Transaction.create({
       user_id: user,
       amount,
