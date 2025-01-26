@@ -8,6 +8,7 @@ import { addEvent, editEvent, getAllOffersWithEvents, getOfferByIdWithEvents } f
 import getPendingWithdraw from "../controllers/admin/payout/index.js";
 import getConfig from "../controllers/admin/get-config/index.js";
 import getUsers, { getUserById, updateUserBanStatus } from "../controllers/admin/get-users/index.js";
+import sendReward from "../controllers/admin/send-reward.js";
 
 const adminRouter = express.Router();
 /**
@@ -1058,4 +1059,91 @@ adminRouter.post("/update-user-ban-status", authAdmin, updateUserBanStatus);
  */
 
 adminRouter.get("/get-user-by-id", authAdmin, getUserById);
+/**
+ * @swagger
+ * /api/admin/send-reward:
+ *   post:
+ *     summary: Send a reward to a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *               - amount
+ *               - description
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 description: ID of the user to receive the reward
+ *                 example: 1
+ *               amount:
+ *                 type: number
+ *                 description: Reward amount
+ *                 example: 100.50
+ *               description:
+ *                 type: string
+ *                 description: Reason or description for the reward
+ *                 example: Referral Bonus
+ *     responses:
+ *       200:
+ *         description: Reward sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Reward sent successfully
+ *       400:
+ *         description: Bad Request (missing or invalid input)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: Amount is required
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+adminRouter.post("/send-reward", authAdmin, sendReward);
 export default adminRouter;
