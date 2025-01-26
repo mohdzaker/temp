@@ -105,7 +105,7 @@ const initiateTrueCallerCall = async (req, res) => {
         email: tokenInfo.email,
         profilePic: tokenInfo.picture,
         phoneNumber,
-        referedBy: referedById || "huntcash",
+        referedBy: referedById || 0,
         referCode,
         isVerified: true,
       });

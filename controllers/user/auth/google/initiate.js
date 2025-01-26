@@ -143,7 +143,7 @@ const initiateGoogle = async (req, res) => {
         email: tokenInfo.payload.email,
         mobileNumber,
         profilePic: tokenInfo.payload.picture,
-        referedBy: referedById || "huntcash",
+        referedBy: referedById || 0,
         referCode,
       });
       

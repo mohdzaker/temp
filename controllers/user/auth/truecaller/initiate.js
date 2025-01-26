@@ -142,7 +142,7 @@ const initiateTrueCaller = async (req, res) => {
         email,
         mobileNumber: phone_number,
         profilePic: picture,
-        referedBy: referedById || "huntcash", // Default to "huntcash" if no valid referedBy
+        referedBy: referedById || 0, // Default to "huntcash" if no valid referedBy
         referCode,
         isVerified: true,
       });
