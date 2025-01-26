@@ -12,7 +12,7 @@ const Referlist = sequelize.define("Referlist", {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: "User", // Refers to the User model
+      model: "Users", // Refers to the User model
       key: "id",
     },
   },
@@ -20,7 +20,7 @@ const Referlist = sequelize.define("Referlist", {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: "User", // Refers to the User model
+      model: "Users", // Refers to the User model
       key: "id",
     },
   },
