@@ -14,7 +14,7 @@ const User = sequelize.define("User", {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true, 
+    unique: true,
   },
   mobileNumber: {
     type: Sequelize.BIGINT,
@@ -25,10 +25,10 @@ const User = sequelize.define("User", {
     allowNull: false,
   },
   referedBy: {
-    type: Sequelize.INTEGER,  
+    type: Sequelize.INTEGER,
     allowNull: true,
     references: {
-      model: "User", 
+      model: "Users", // Reference the actual table name (pluralized if using Sequelize conventions)
       key: "id",
     },
   },
@@ -47,8 +47,10 @@ const User = sequelize.define("User", {
   },
   balance: {
     type: Sequelize.DECIMAL(10, 2),
-    defaultValue: 0.00,
+    defaultValue: 0.0,
   },
+}, {
+  tableName: "Users", // Ensure the table name matches the actual table name
 });
 
 export default User;
