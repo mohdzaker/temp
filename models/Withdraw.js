@@ -15,6 +15,14 @@ const Withdraw = sequelize.define("Withdraw", {
         type: Sequelize.STRING,
         allowNull: false
     },
+    tnx_id: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    order_id: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     amount: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -22,6 +30,9 @@ const Withdraw = sequelize.define("Withdraw", {
     time:{
         type: Sequelize.DATE,
         allowNull: false
+    },
+    withdraw_status: {
+        type: Sequelize.INTEGER,
     },
     status: {
         type: Sequelize.STRING,

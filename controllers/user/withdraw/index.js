@@ -1,13 +1,12 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
-import { generateOrderId, sendPayout } from "../../../utils/sendPayout.js";
+import { generateOrderId, initiatePayout } from "../../../utils/initiatePayout.js";
 
 const withdraw = async (req, res) => {
   try {
-    const { upi_id, amount } = req.body;
+    const { upi_id, amount, comment } = req.body;
 
-    // Validate input
     if (!upi_id || upi_id.trim() === "") {
       return res.json({
         status: "failed",
@@ -22,57 +21,62 @@ const withdraw = async (req, res) => {
       });
     }
 
+    if(!comment){
+      return res.json({
+        status: "failed",
+        message: "Please enter a comment!",
+      });
+    }
+    
     const user = req.user.id;
 
-    const checkUserBalance = await User.findOne({
-      where: { id: user },
-    });
-
-    if (!checkUserBalance) {
+    const userRecord = await User.findOne({ where: { id: user } });
+    if (!userRecord) {
       return res.json({
         status: "failed",
         message: "User not found!",
       });
     }
 
-    if (checkUserBalance.balance < amount) {
+    if (userRecord.balance < amount) {
       return res.json({
         status: "failed",
         message: "Insufficient balance in the wallet!",
       });
     }
 
-    const newBalance = checkUserBalance.balance - amount;
-
-    await User.update(
-      { balance: newBalance },
-      { where: { id: user } }
-    );
+    const newBalance = userRecord.balance - amount;
+    await User.update({ balance: newBalance }, { where: { id: user } });
     const order_id = generateOrderId();
-    if(amount < 100){
-      const sendPayoutToUser = await sendPayout(checkUserBalance.username, upi_id, amount, order_id);
-      if(sendPayoutToUser.status === "failed"){
-        await Withdraw.create({
-          user_id: user,
-          upi_id,
-          amount,
-          time: new Date(),
-        })
-      }else{
-        await Withdraw.create({
-          user_id: user,
-          upi_id,
-          amount,
-          time: new Date(),
-          status: "processing",
-        })
-      }
-    }
+
+    const payoutResponse = await initiatePayout(
+      userRecord.username,
+      upi_id,
+      amount,
+      comment,
+      order_id
+    );
+
+    const txn_id = payoutResponse.tnx_id || null;
+    const txn_status = payoutResponse.tnx_status == "success"? "pending": "failed";
+
+    const newWithdraw = await Withdraw.create({
+      user_id: user,
+      upi_id,
+      tnx_id: txn_id,
+      order_id,
+      amount,
+      time: new Date(),
+      withdraw_status: txn_status=="success"? 2 : 3,
+      status: txn_status === "success" ? "processing" : "failed",
+    });
+
     await Transaction.create({
       user_id: user,
       amount,
       description: `Withdrawal of ${amount} to UPI ${upi_id}`,
-    })
+    });
+
     return res.json({
       status: "success",
       message: "Withdrawal request created successfully!",

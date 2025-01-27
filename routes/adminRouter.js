@@ -983,27 +983,22 @@ adminRouter.post("/update-user-ban-status", authAdmin, updateUserBanStatus);
 /**
  * @swagger
  * /api/admin/get-user-by-id:
- *   post:
- *     summary: Fetch a user by ID
+ *   get:
+ *     summary: Get details of a user by their ID
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
- * requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - id
- *             properties:
- *               id:
- *                 type: integer
- *                 description: ID of the user
- *                 example: 1
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user to fetch
+ *         example: 1
  *     responses:
  *       200:
- *         description: User fetched successfully
+ *         description: User details fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -1027,9 +1022,31 @@ adminRouter.post("/update-user-ban-status", authAdmin, updateUserBanStatus);
  *                     email:
  *                       type: string
  *                       example: johndoe@example.com
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: +1234567890
  *                     isBanned:
  *                       type: boolean
  *                       example: false
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2025-01-26T10:00:00Z
+ *                     updatedAt:
+ *                       type: string
+ *                       example: 2025-01-26T12:00:00Z
+ *       400:
+ *         description: Missing or invalid user ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: failed
+ *                 message:
+ *                   type: string
+ *                   example: User ID is required
  *       404:
  *         description: User not found
  *         content:

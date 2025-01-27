@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function sendPayout(name, upi, amount, comment, orderId) {
+export async function initiatePayout(name, upi, amount, comment, orderId) {
     const url = "https://payout.pe2pe.in/Pe2Pe/v2/";
     const data = {
         secret_key: "Oh5t9F3HuDK4rEzS",
@@ -21,7 +21,7 @@ export async function sendPayout(name, upi, amount, comment, orderId) {
         throw error;
     }
 }
-export function generateOrderId(prefix = "ORD") {
+export function generateOrderId(prefix = "HUNTORD") {
     const timestamp = Date.now(); // Current timestamp in milliseconds
     const randomNum = Math.floor(Math.random() * 100000); // Random number (0-99999)
     return `${prefix}${timestamp}${randomNum}`;
