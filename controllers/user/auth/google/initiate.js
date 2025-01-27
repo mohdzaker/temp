@@ -10,7 +10,7 @@ import Config from "../../../../models/Config.js";
 
 const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy, sms_hash } = req.body;
+    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash } = req.body;
     console.log("sms hash: ", sms_hash);
 
     if (!mobileNumber || mobileNumber === "") {
