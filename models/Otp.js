@@ -27,6 +27,8 @@ const Otp = sequelize.define("Otp", {
         type: Sequelize.DATE,
         allowNull: false
     },
-});
+},{
+    timestamps: true, // Enables createdAt and updatedAt automatically
+  });
 
 export default Otp;
