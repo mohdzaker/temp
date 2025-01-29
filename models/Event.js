@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
-import Offer from "./Offer.js"; // Import the Offer model
+import Offer from "./Offer.js"; // Import Offer model
 
 const Event = sequelize.define("Event", {
   id: {
@@ -34,6 +34,7 @@ const Event = sequelize.define("Event", {
   },
 });
 
+// Define associations
 Offer.hasMany(Event, { foreignKey: "campaign_id", as: "events" });
 Event.belongsTo(Offer, { foreignKey: "campaign_id", as: "offer" });
 
