@@ -37,7 +37,7 @@ const getOffers = async (req, res) => {
             });
 
             // Step 2.2: Check if the user has completed all events of this offer
-            const completedEvents = await EventHistory.findAll({
+            const completedEvents = await EventHistory.findOne({
                 where: {
                     user_id,
                     campaign_id: offer.id,

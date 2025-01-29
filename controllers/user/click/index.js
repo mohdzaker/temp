@@ -7,12 +7,19 @@ import useragent from "useragent";
 const clickHandler = async (req, res) => {
   try {
     const user_id = req.user.id;
-    const { campaign_id } = req.body;
+    const { campaign_id, gaid } = req.body;
 
     if (!campaign_id) {
       return res.json({
         status: "failed",
         message: "Campaign ID is required!",
+      });
+    }
+
+    if(!gaid){
+      return res.json({
+        status: "failed",
+        message: "Google Analytics ID is required!",
       });
     }
 
@@ -62,6 +69,7 @@ const clickHandler = async (req, res) => {
 
     let tracking_link = checkCampaignExists.tracking_link;
     tracking_link = tracking_link.replace("{click_id}", clickHash);
+    tracking_link = tracking_link.replace("{gaid}", gaid);
 
     res.json({
       status: "success",
