@@ -33,7 +33,9 @@ const sendReward = async (req, res) => {
       });
     }
 
-    const user = await User.findByPk(user_id);
+    const user = await User.findOne({
+      where: { id: user_id },
+    });
 
     if (!user) {
       return res.status(404).json({

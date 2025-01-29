@@ -1,9 +1,12 @@
 import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
+
 import { Sequelize } from "sequelize";
+import EventHistory from "../../../models/EventHistory.js";
 Offer.associate({ Click });
 Click.associate({ Offer });
+EventHistory.associate({ Offer, Click });
 const getOffers = async (req, res) => {
     try {
         const user_id = req.user.id;
