@@ -42,13 +42,19 @@ const getOffers = async (req, res) => {
             limit: parseInt(limit),
         });
 
+        // Filter out offers where all associated events are completed
+        const filteredOffers = offers.filter(offer => {
+            const allEventsCompleted = offer.events.every(event => event.status === "completed");
+            return !allEventsCompleted;
+        });
+
         return res.status(200).json({
             status: "success",
-            data: offers,
+            data: filteredOffers,
             pagination: {
                 currentPage: parseInt(page),
                 pageSize: parseInt(limit),
-                total: offers.length,
+                total: filteredOffers.length,
             },
         });
     } catch (error) {
