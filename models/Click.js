@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
+import Event from "./Event.js";
 
 const Click = sequelize.define("Click", {
   id: {
@@ -32,7 +33,9 @@ const Click = sequelize.define("Click", {
 // Define associations (lazy load models to prevent circular dependencies)
 Click.associate = (models) => {
   Click.belongsTo(models.Offer, { foreignKey: "campaign_id", as: "campaign" });
-  
+  if(models.Event){
+    EventHistory.belongsTo(Event, { foreignKey: "event_id", targetKey: "id", as: "event" });
+  }
   if (models.EventHistory) {  // Ensure EventHistory is available
     Click.hasMany(EventHistory, { foreignKey: "clickHash", sourceKey: "clickHash", as: "eventHistories" });
   }
