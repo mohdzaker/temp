@@ -1,12 +1,15 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
-import { generateOrderId, initiatePayout } from "../../../utils/initiatePayout.js";
+import {
+  generateOrderId,
+  initiatePayout,
+} from "../../../utils/initiatePayout.js";
 
 const withdraw = async (req, res) => {
   try {
     const user = req.user.id;
-    const { upi_id, amount, comment= "HuntCash" } = req.body;
+    const { upi_id, amount, comment = "HuntCash" } = req.body;
 
     if (!upi_id || upi_id.trim() === "") {
       return res.json({
@@ -39,18 +42,22 @@ const withdraw = async (req, res) => {
 
     const newBalance = userRecord.balance - amount;
     await User.update({ balance: newBalance }, { where: { id: user } });
-    const order_id = generateOrderId();
 
-    const payoutResponse = await initiatePayout(
-      userRecord.username,
-      upi_id,
-      amount,
-      comment,
-      order_id
-    );
+    if (amount <= 100) {
+      const order_id = generateOrderId();
+
+      const payoutResponse = await initiatePayout(
+        userRecord.username,
+        upi_id,
+        amount,
+        comment,
+        order_id
+      );
+    }
 
     const txn_id = payoutResponse.tnx_id || null;
-    const txn_status = payoutResponse.tnx_status == "success"? "pending": "failed";
+    const txn_status =
+      payoutResponse.tnx_status == "success" ? "processing" : "pending" || "pending";
 
     const newWithdraw = await Withdraw.create({
       user_id: user,
@@ -59,7 +66,7 @@ const withdraw = async (req, res) => {
       order_id,
       amount,
       time: new Date(),
-      withdraw_status: txn_status=="success"? 2 : 3,
+      withdraw_status: txn_status == "success" ? 2 : 3,
       status: txn_status === "success" ? "processing" : "failed",
     });
 
@@ -67,12 +74,13 @@ const withdraw = async (req, res) => {
       user_id: user,
       amount,
       description: `Withdrawal of ${amount} to UPI ${upi_id}`,
-      trans_type: "debit"
+      trans_type: "debit",
     });
 
     return res.json({
       status: "success",
-      message: "Withdrawal request created successfully! "+ payoutResponse.message,
+      message:
+        "Withdrawal request created successfully! " + payoutResponse.message,
       data: newWithdraw,
     });
   } catch (error) {
