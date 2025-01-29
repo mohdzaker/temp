@@ -1,10 +1,10 @@
 import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
-import { Sequelize } from "sequelize";
 import EventHistory from "../../../models/EventHistory.js";
+
 Offer.associate({ Click });
-Click.associate({ Offer });
+Click.associate({ Offer, EventHistory });
 EventHistory.associate({ Offer, Click });
 
 const getOffers = async (req, res) => {
@@ -25,29 +25,30 @@ const getOffers = async (req, res) => {
 
         // Step 2: Filter offers based on event completion status
         const filteredOffers = [];
-        
+
         for (const offer of offers) {
             // Step 2.1: Get all events for the offer
             const events = await Event.findAll({
                 where: {
                     campaign_id: offer.id,
-                    status: "active"
+                    status: "active",
                 },
                 attributes: ["id"],
             });
 
             // Step 2.2: Check if the user has completed all events of this offer
-            const completedEvents = await Click.findAll({
+            const completedEvents = await EventHistory.findAll({
                 where: {
                     user_id,
                     campaign_id: offer.id,
+                    status: "completed",
                 },
                 include: [
                     {
                         model: Event,
                         as: "event",
                         where: {
-                            id: events.map(event => event.id) // Match only the offer's events
+                            id: events.map(event => event.id), // Match only the offer's events
                         },
                         required: true,
                     },
