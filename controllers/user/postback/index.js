@@ -105,6 +105,7 @@ const handlePostback = async (req, res) => {
       user_id: checkClickHash.user_id,
       amount: checkEventExists.event_amount,
       description: "Event Completion",
+      trans_type: "credit",
     })
     const config = await Config.findOne({
       where: { id: 1 },
