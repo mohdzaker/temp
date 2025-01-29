@@ -13,6 +13,7 @@ const getOffers = async (req, res) => {
 
         const offset = (page - 1) * limit;
 
+        // Fetch offers
         const offers = await Offer.findAll({
             attributes: ["id", "campaign_name", "short_description", "tracking_link", "campaign_logo", "status"],
             where: {
@@ -42,11 +43,33 @@ const getOffers = async (req, res) => {
             limit: parseInt(limit),
         });
 
-        // Filter out offers where all associated events are completed
-        const filteredOffers = offers.filter(offer => {
-            const allEventsCompleted = offer.events.every(event => event.status === "completed");
-            return !allEventsCompleted;
-        });
+        // Filter the offers based on event history
+        const filteredOffers = [];
+        
+        for (const offer of offers) {
+            // Fetch event histories for the user and this offer's campaign
+            const eventHistories = await EventHistory.findAll({
+                where: {
+                    campaign_id: offer.id,
+                    user_id: user_id,
+                },
+                include: [
+                    {
+                        model: Event,
+                        as: "event",
+                        attributes: ["id", "status"],
+                    },
+                ],
+            });
+
+            // Check if all events for this offer are completed
+            const allEventsCompleted = eventHistories.every(eventHistory => eventHistory.event.status === "completed");
+
+            // If not all events are completed, add the offer to the filteredOffers array
+            if (!allEventsCompleted) {
+                filteredOffers.push(offer);
+            }
+        }
 
         return res.status(200).json({
             status: "success",
@@ -65,5 +88,6 @@ const getOffers = async (req, res) => {
         });
     }
 };
+
 
 export default getOffers;
