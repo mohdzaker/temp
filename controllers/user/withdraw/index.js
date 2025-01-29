@@ -5,7 +5,7 @@ import { generateOrderId, initiatePayout } from "../../../utils/initiatePayout.j
 
 const withdraw = async (req, res) => {
   try {
-    const { upi_id, amount, comment } = req.body;
+    const { upi_id, amount, comment= "HuntCash.in" } = req.body;
 
     if (!upi_id || upi_id.trim() === "") {
       return res.json({
@@ -21,12 +21,6 @@ const withdraw = async (req, res) => {
       });
     }
 
-    if(!comment){
-      return res.json({
-        status: "failed",
-        message: "Please enter a comment!",
-      });
-    }
     
     const user = req.user.id;
 
@@ -53,7 +47,7 @@ const withdraw = async (req, res) => {
       userRecord.username,
       upi_id,
       amount,
-      comment="HuntCash.in",
+      comment,
       order_id
     );
 
