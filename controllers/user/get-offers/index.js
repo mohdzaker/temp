@@ -57,3 +57,6 @@ const getOffers = async (req, res) => {
         });
     }
 };
+
+
+export default getOffers;
