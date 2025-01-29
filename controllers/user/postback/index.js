@@ -1,12 +1,3 @@
-import Decimal from "decimal.js";
-import Click from "../../../models/Click.js";
-import Config from "../../../models/Config.js";
-import Event from "../../../models/Event.js";
-import EventHistory from "../../../models/EventHistory.js";
-import User from "../../../models/User.js";
-import Transaction from "../../../models/Transaction.js";
-import Referlist from "../../../models/Referlist.js";
-
 const handlePostback = async (req, res) => {
   try {
     const { click_id, event } = req.query;
@@ -44,9 +35,7 @@ const handlePostback = async (req, res) => {
     }
 
     const checkEventExists = await Event.findOne({
-      where: {
-        campaign_id: checkClickHash.campaign_id,
-      },
+      where: { campaign_id: checkClickHash.campaign_id },
     });
 
     if (!checkEventExists) {
@@ -68,25 +57,38 @@ const handlePostback = async (req, res) => {
         clickHash: click_id,
         campaign_id: checkClickHash.campaign_id,
         event_id: checkEventExists.id,
-        status: "completed",
       },
     });
 
     if (checkEventHistory) {
-      return res.status(400).json({
-        status: "failed",
-        message:
-          "Offer with this event has already been completed for this user!",
+      if (checkEventHistory.status === "completed") {
+        return res.status(400).json({
+          status: "failed",
+          message:
+            "Offer with this event has already been completed for this user!",
+        });
+      }
+
+      // Update the existing record instead of creating a new one
+      await EventHistory.update(
+        { status: "completed" },
+        {
+          where: {
+            clickHash: click_id,
+            campaign_id: checkClickHash.campaign_id,
+            event_id: checkEventExists.id,
+          },
+        }
+      );
+    } else {
+      await EventHistory.create({
+        user_id: checkClickHash.user_id,
+        clickHash: click_id,
+        campaign_id: checkClickHash.campaign_id,
+        event_id: checkEventExists.id,
+        status: "completed",
       });
     }
-
-    const newEventHistory = await EventHistory.create({
-      user_id: checkClickHash.user_id,
-      clickHash: click_id,
-      campaign_id: checkClickHash.campaign_id,
-      event_id: checkEventExists.id,
-      status: "completed",
-    });
 
     const user = await User.findOne({
       where: { id: checkClickHash.user_id },
@@ -101,49 +103,54 @@ const handlePostback = async (req, res) => {
 
     user.balance += checkEventExists.event_amount;
     await user.save();
+
     await Transaction.create({
       user_id: checkClickHash.user_id,
       amount: checkEventExists.event_amount,
       description: "Event Completion",
       trans_type: "credit",
-    })
-    const config = await Config.findOne({
-      where: { id: 1 },
-    });
-    const getPercentage = (amount, percentage) => {
-      let number = new Decimal(amount);
-      let newAmout = new Decimal(number.dividedBy(100)).times(
-        new Decimal(percentage)
-      );
-      return +newAmout;
-    }
-    const refer_percentage = config.per_refer;
-    const referrer_amount = getPercentage(checkEventExists.event_amount, refer_percentage);
-    const referrer = user.referedBy;
-    const referrerUser = await User.findOne({
-      where: { id: referrer },
-    });
-    if (referrer && referrerUser) {
-      referrerUser.balance += referrer_amount;
-      await referrerUser.save();
-    }
-    const referedUser = await Referlist.findOne({
-      where: {
-        user_id: referrerUser.id,
-        referred_user_id: user_id
-      }
     });
 
-    if (referedUser) {
-      referedUser.refer_commission += referedUser + referrer_amount;
-      await referedUser.save();
+    const config = await Config.findOne({ where: { id: 1 } });
+
+    const getPercentage = (amount, percentage) => {
+      return new Decimal(amount).mul(new Decimal(percentage)).div(100).toNumber();
+    };
+
+    const refer_percentage = config.per_refer;
+    const referrer_amount = getPercentage(
+      checkEventExists.event_amount,
+      refer_percentage
+    );
+    const referrer = user.referedBy;
+
+    if (referrer) {
+      const referrerUser = await User.findOne({ where: { id: referrer } });
+
+      if (referrerUser) {
+        referrerUser.balance += referrer_amount;
+        await referrerUser.save();
+
+        const referedUser = await Referlist.findOne({
+          where: {
+            user_id: referrerUser.id,
+            referred_user_id: user.id,
+          },
+        });
+
+        if (referedUser) {
+          referedUser.refer_commission += referrer_amount;
+          await referedUser.save();
+        }
+
+        await Transaction.create({
+          user_id: referrer,
+          amount: referrer_amount,
+          description: "Refer Commission",
+          trans_type: "credit",
+        });
+      }
     }
-    await Transaction.create({
-      user_id: referrer,
-      amount: referrer_amount,
-      description: "Refer Commission",
-      trans_type: "credit",
-    });
 
     const allEventsInCampaign = await Event.findAll({
       where: { campaign_id: checkClickHash.campaign_id },
