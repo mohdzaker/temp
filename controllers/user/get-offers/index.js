@@ -5,7 +5,7 @@ import EventHistory from "../../../models/EventHistory.js";
 
 Offer.associate({ Click });
 Click.associate({ Offer, EventHistory });
-EventHistory.associate({ Offer, Click });
+EventHistory.associate({ Offer, Click, Event });
 
 const getOffers = async (req, res) => {
     try {
