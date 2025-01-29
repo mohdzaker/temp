@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
-import Offer from "./Offer.js";
+import Offer from "./Offer.js";  // Ensure Offer is imported
 
 const EventHistory = sequelize.define("EventHistory", {
   id: {
@@ -39,11 +39,14 @@ EventHistory.associate = (models) => {
     foreignKey: "campaign_id", 
     as: "campaign" 
   });
-  EventHistory.belongsTo(models.Click, { 
-    foreignKey: "clickHash", 
-    targetKey: "clickHash", 
-    as: "click" 
-  });
+
+  if (models.Click) { // Ensure Click is available
+    EventHistory.belongsTo(models.Click, { 
+      foreignKey: "clickHash", 
+      targetKey: "clickHash", 
+      as: "click" 
+    });
+  }
 };
 
 export default EventHistory;
