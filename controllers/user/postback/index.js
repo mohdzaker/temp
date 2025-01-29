@@ -133,7 +133,7 @@ const handlePostback = async (req, res) => {
     const referedUser = await Referlist.findOne({
       where: {
         user_id: referrerUser.id,
-        referred_user_id: user_id
+        referred_user_id: checkClickHash.user_id
       }
     });
 
