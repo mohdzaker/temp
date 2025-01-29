@@ -53,7 +53,7 @@ const withdraw = async (req, res) => {
       userRecord.username,
       upi_id,
       amount,
-      comment,
+      comment="HuntCash.in",
       order_id
     );
 
