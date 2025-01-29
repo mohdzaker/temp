@@ -1,8 +1,9 @@
+// EventHistory model
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
 import Offer from "./Offer.js";
-import Click from "./Click.js"; // Import Click model
-import Event from "./Event.js"; // Import Event model
+import Click from "./Click.js";
+import Event from "./Event.js";
 
 const EventHistory = sequelize.define("EventHistory", {
   id: {
@@ -37,27 +38,18 @@ const EventHistory = sequelize.define("EventHistory", {
 
 // Define associations
 EventHistory.associate = (models) => {
-  EventHistory.belongsTo(models.Offer, {
-    foreignKey: "campaign_id",
-    as: "campaign",
+  EventHistory.belongsTo(models.Offer, { 
+    foreignKey: "campaign_id", 
+    as: "campaign" 
   });
 
   if (models.Click) {
-    // Ensure Click is available
-    EventHistory.belongsTo(Click, {
-      foreignKey: "clickHash",
-      targetKey: "clickHash",
-      as: "click",
-    });
+    EventHistory.belongsTo(models.Click, { foreignKey: "clickHash", targetKey: "clickHash", as: "click" });
   }
 
+  // Adding association between EventHistory and Event
   if (models.Event) {
-    // Ensure Event is available
-    EventHistory.belongsTo(Event, {
-      foreignKey: "event_id",
-      targetKey: "id",
-      as: "event",
-    });
+    EventHistory.belongsTo(models.Event, { foreignKey: "event_id", as: "event" });
   }
 };
 
