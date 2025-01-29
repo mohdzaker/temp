@@ -6,7 +6,6 @@ import EventHistory from "../../../models/EventHistory.js";
 Offer.associate({ Click });
 Click.associate({ Offer });
 EventHistory.associate({ Offer, Click });
-
 const getOffers = async (req, res) => {
     try {
         const user_id = req.user.id;
@@ -18,21 +17,15 @@ const getOffers = async (req, res) => {
             attributes: ["id", "campaign_name", "short_description", "tracking_link", "campaign_logo", "status"],
             where: {
                 status: "active", 
-                // Exclude offers with completed clicks for the current user
-                id: {
-                    [Sequelize.Op.notIn]: Sequelize.literal(
-                        `(SELECT \`offerId\` FROM \`Clicks\` WHERE \`userId\` = ${user_id} AND \`status\` = 'completed')`
-                    )
-                }
             },
             include: [
                 {
                     model: Click,
                     as: "clicks",
-                    required: false,
+                    required: false, 
                     where: {
                         user_id,
-                        status: "completed", 
+                        status: { [Sequelize.Op.ne]: "completed" }, 
                     },
                 },
                 {
@@ -66,7 +59,5 @@ const getOffers = async (req, res) => {
         });
     }
 };
-
-
 
 export default getOffers;
