@@ -6,11 +6,24 @@ import EventHistory from "../../../models/EventHistory.js";
 import User from "../../../models/User.js";
 import Transaction from "../../../models/Transaction.js";
 import Referlist from "../../../models/Referlist.js";
+import SecretKey from "../../../models/SecureKey.js";
 
 const handlePostback = async (req, res) => {
   try {
-    const { click_id, event } = req.query;
+    const { click_id, event, secret_key } = req.query;
+    
+    const checkSecretKey = await SecretKey.findOne({
+      where: {
+        secret_key
+      }
+    });
 
+    if (!checkSecretKey) {
+      return res.status(401).json({
+        status: "failed",
+        message: "Invalid or expired secret key!",
+      });
+    }
     if (!click_id) {
       return res.status(400).json({
         status: "failed",
