@@ -140,7 +140,8 @@ const handlePostback = async (req, res) => {
     await Transaction.create({
       user_id: referrer,
       amount: referrer_amount,
-      description: "Refer Commission"
+      description: "Refer Commission",
+      trans_type: "credit",
     });
 
     const allEventsInCampaign = await Event.findAll({
