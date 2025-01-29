@@ -21,7 +21,7 @@ const getOffers = async (req, res) => {
                 // Exclude offers with completed clicks for the current user
                 id: {
                     [Sequelize.Op.notIn]: Sequelize.literal(
-                        `(SELECT "offerId" FROM "Clicks" WHERE "userId" = ${user_id} AND "status" = 'completed')`
+                        `(SELECT \`offerId\` FROM \`Clicks\` WHERE \`userId\` = ${user_id} AND \`status\` = 'completed')`
                     )
                 }
             },
@@ -66,6 +66,7 @@ const getOffers = async (req, res) => {
         });
     }
 };
+
 
 
 export default getOffers;
