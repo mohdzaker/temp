@@ -6,67 +6,57 @@ import EventHistory from "../../../models/EventHistory.js";
 Offer.associate({ Click });
 Click.associate({ Offer });
 EventHistory.associate({ Offer, Click });
+
 const getOffers = async (req, res) => {
     try {
         const user_id = req.user.id;
-        const { page = 1, limit = 10 } = req.query; 
-
+        const { page = 1, limit = 10 } = req.query;
         const offset = (page - 1) * limit;
 
-        // Fetch offers
+        // Step 1: Get all offers
         const offers = await Offer.findAll({
             attributes: ["id", "campaign_name", "short_description", "tracking_link", "campaign_logo", "status"],
             where: {
-                status: "active", 
+                status: "active",
             },
-            include: [
-                {
-                    model: Click,
-                    as: "clicks",
-                    required: false, 
-                    where: {
-                        user_id,
-                        status: { [Sequelize.Op.ne]: "completed" }, 
-                    },
-                },
-                {
-                    model: Event,
-                    as: "events",
-                    required: false,
-                    where: {
-                        status: "active"
-                    },
-                    attributes: ["id", "event_title", "event_short_desc", "event_amount", "status"]
-                }
-            ],
             offset,
             limit: parseInt(limit),
         });
 
-        // Filter the offers based on event history
+        // Step 2: Filter offers based on event completion status
         const filteredOffers = [];
         
         for (const offer of offers) {
-            // Fetch event histories for the user and this offer's campaign
-            const eventHistories = await EventHistory.findAll({
+            // Step 2.1: Get all events for the offer
+            const events = await Event.findAll({
                 where: {
                     campaign_id: offer.id,
-                    user_id: user_id,
+                    status: "active"
+                },
+                attributes: ["id"],
+            });
+
+            // Step 2.2: Check if the user has completed all events of this offer
+            const completedEvents = await Click.findAll({
+                where: {
+                    user_id,
+                    campaign_id: offer.id,
                 },
                 include: [
                     {
                         model: Event,
                         as: "event",
-                        attributes: ["id", "status"],
+                        where: {
+                            id: events.map(event => event.id) // Match only the offer's events
+                        },
+                        required: true,
                     },
                 ],
             });
 
-            // Check if all events for this offer are completed
-            const allEventsCompleted = eventHistories.every(eventHistory => eventHistory.event.status === "completed");
-
-            // If not all events are completed, add the offer to the filteredOffers array
-            if (!allEventsCompleted) {
+            // If the number of completed events equals the total events of the offer, it means all are completed
+            if (completedEvents.length !== events.length) {
+                // Add offer to filtered list if not all events are completed
                 filteredOffers.push(offer);
             }
         }
@@ -88,6 +78,5 @@ const getOffers = async (req, res) => {
         });
     }
 };
-
 
 export default getOffers;
