@@ -41,11 +41,7 @@ EventHistory.associate = (models) => {
   });
 
   if (models.Click) { // Ensure Click is available
-    EventHistory.belongsTo(models.Click, { 
-      foreignKey: "clickHash", 
-      targetKey: "clickHash", 
-      as: "click" 
-    });
+    EventHistory.belongsTo(Click, { foreignKey: "clickHash", targetKey: "clickHash", as: "click" });
   }
 };
 
