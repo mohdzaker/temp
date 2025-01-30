@@ -1168,5 +1168,5 @@ adminRouter.post("/send-reward", authAdmin, sendReward);
 
 adminRouter.post("/set-secret-key",authAdmin, setSecretKey);
 
-adminRouter.get("/dashboard", getDashboardData);
+adminRouter.get("/dashboard", authAdmin, getDashboardData);
 export default adminRouter;
