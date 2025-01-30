@@ -35,7 +35,7 @@ const Withdraw = sequelize.define("Withdraw", {
     },
     status: {
         type: Sequelize.STRING,
-        defaultValue: "processing"
+        defaultValue: "pending"
     }
 });
 
