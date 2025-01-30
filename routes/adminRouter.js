@@ -10,6 +10,7 @@ import getConfig from "../controllers/admin/get-config/index.js";
 import getUsers, { getUserById, updateUserBanStatus } from "../controllers/admin/get-users/index.js";
 import sendReward from "../controllers/admin/send-reward.js";
 import { setSecretKey } from "../controllers/admin/secret-key/index.js";
+import { getDashboardData } from "../controllers/admin/dashboard/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1166,4 +1167,6 @@ adminRouter.get("/get-user-by-id", authAdmin, getUserById);
 adminRouter.post("/send-reward", authAdmin, sendReward);
 
 adminRouter.post("/set-secret-key",authAdmin, setSecretKey);
+
+adminRouter.get("/dashboard", getDashboardData);
 export default adminRouter;

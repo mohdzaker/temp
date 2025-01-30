@@ -2,7 +2,7 @@ import User from "../../../models/User.js";
 import Offer from "../../../models/Offer.js";
 import Withdraw from "../../../models/Withdraw.js";
 
-const getDashboardData = async (req, res) => {
+export const getDashboardData = async (req, res) => {
   try {
     const totalUsers = await User.count();
     const totalBannedUsers = await User.count({
