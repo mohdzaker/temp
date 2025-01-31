@@ -51,7 +51,7 @@ const getOffers = async (req, res) => {
             });
 
             // If the number of completed events equals the total events of the offer, it means all are completed
-            if (completedEvents.length !== events.length) {
+            if (completedEvents && completedEvents.length !== events.length) {
                 // Add offer to filtered list if not all events are completed
                 filteredOffers.push(offer);
             }
