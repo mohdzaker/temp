@@ -2,11 +2,8 @@ import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
-
-Offer.associate({ Click });
-Event.associate({ Offer, EventHistory });
-EventHistory.associate({ Offer, Click, Event });
-Click.associate({ Offer, EventHistory });
+import models from "../../../models/index.js";
+const { Offer, Click, Event, EventHistory } = models;
 
 
 const getOffers = async (req, res) => {

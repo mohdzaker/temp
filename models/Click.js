@@ -30,18 +30,4 @@ const Click = sequelize.define("Click", {
   browser_type: Sequelize.STRING,
 });
 
-// Define associations (lazy load models to prevent circular dependencies)
-Click.associate = (models) => {
-  Click.belongsTo(models.Offer, { foreignKey: "campaign_id", as: "campaign" });
-
-  if (models.EventHistory) {
-    // Ensure EventHistory is available
-    Click.hasMany(models.EventHistory, {
-      foreignKey: "clickHash",
-      sourceKey: "clickHash",
-      as: "eventHistories",
-    });
-  }
-};
-
 export default Click;

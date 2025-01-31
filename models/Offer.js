@@ -29,11 +29,4 @@ const Offer = sequelize.define("Offer", {
   },
 });
 
-// Use lazy import to resolve circular dependency
-Offer.associate = (models) => {
-  Offer.hasMany(models.Click, { foreignKey: "campaign_id", as: "clicks" });
-  Offer.hasMany(models.Event, { foreignKey: "campaign_id", as: "events" }); // ✅ Add this line
-};
-
-
 export default Offer;
