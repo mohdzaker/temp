@@ -4,6 +4,7 @@ import Click from "./Click.js";
 import Event from "./Event.js";
 import EventHistory from "./EventHistory.js";
 
+// Updated associations
 Offer.hasMany(Click, { foreignKey: "campaign_id", as: "clicks" });
 Offer.hasMany(Event, { foreignKey: "campaign_id", as: "events" });
 
@@ -15,7 +16,8 @@ Event.hasMany(EventHistory, { foreignKey: "event_id", as: "eventHistories" });
 
 EventHistory.belongsTo(Offer, { foreignKey: "campaign_id", as: "offer" });
 EventHistory.belongsTo(Event, { foreignKey: "event_id", as: "event" });
-EventHistory.belongsTo(Click, { foreignKey: "click_id", as: "clickById" });
+// Updated association to use clickHash instead of click_id
+EventHistory.belongsTo(Click, { foreignKey: "clickHash", targetKey: "clickHash", as: "clickByHash" });
 
 const models = { sequelize, Offer, Click, Event, EventHistory };
 

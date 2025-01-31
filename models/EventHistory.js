@@ -36,4 +36,5 @@ const EventHistory = sequelize.define("EventHistory", {
   },
 });
 
+
 export default EventHistory;
