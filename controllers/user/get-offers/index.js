@@ -3,9 +3,9 @@ import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
 
-Offer.associate({ Event }); // ✅ Include Event
+Offer.associate({ Click, Event }); // ✅ Include Event
 Event.associate({ Offer, EventHistory });
-EventHistory.associate({ Offer, Click, Event });
+EventHistory.associate({ Offer, Event });
 Click.associate({ Offer, EventHistory });
 
 
