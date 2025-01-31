@@ -7,7 +7,7 @@ const getOffers = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
-    // Step 1: Get all offers
+    // Step 1: Get all active offers
     const offers = await Offer.findAll({
       attributes: [
         "id",
@@ -24,41 +24,21 @@ const getOffers = async (req, res) => {
       limit: parseInt(limit),
     });
 
-    // Step 2: Filter offers based on event completion status
+    // Step 2: Filter offers where no completed event history exists for the user
     const filteredOffers = [];
 
     for (const offer of offers) {
-      // Step 2.1: Get all events for the offer
-      const events = await Event.findAll({
-        where: {
-          campaign_id: offer.id,
-          status: "active",
-        },
-        attributes: ["id"],
-      });
-
-      // Step 2.2: Check if the user has completed any events of this offer
-      const completedEvents = await EventHistory.findAll({
+      // Step 2.1: Check if there is any completed event history for the offer and user
+      const completedEventHistory = await EventHistory.findOne({
         where: {
           user_id,
           campaign_id: offer.id,
           status: "completed",
         },
-        include: [
-          {
-            model: Event,
-            as: "event",
-            where: {
-              id: events.map((event) => event.id), // Match only the offer's events
-            },
-            required: true,
-          },
-        ],
       });
 
-      // Check if the number of completed events matches the total events of the offer
-      if (completedEvents.length !== events.length) {
-        // Add offer to filtered list if not all events are completed
+      // If no completed event history exists, add offer to filtered list
+      if (!completedEventHistory) {
         filteredOffers.push(offer);
       }
     }
