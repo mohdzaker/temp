@@ -11,6 +11,7 @@ import getUsers, { getUserById, updateUserBanStatus } from "../controllers/admin
 import sendReward from "../controllers/admin/send-reward.js";
 import { setSecretKey } from "../controllers/admin/secret-key/index.js";
 import { getDashboardData } from "../controllers/admin/dashboard/index.js";
+import getReferHistory from "../controllers/admin/refer-history/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1169,4 +1170,8 @@ adminRouter.post("/send-reward", authAdmin, sendReward);
 adminRouter.post("/set-secret-key",authAdmin, setSecretKey);
 
 adminRouter.get("/dashboard", authAdmin, getDashboardData);
+
+adminRouter.get("/refer-history", authAdmin, getReferHistory);
+
+
 export default adminRouter;
