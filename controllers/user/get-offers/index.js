@@ -3,9 +3,9 @@ import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
 
-Offer.associate({ Click, Event }); // ✅ Include Event
+Offer.associate({ Click });
 Event.associate({ Offer, EventHistory });
-EventHistory.associate({ Offer, Event });
+EventHistory.associate({ Offer, Click, Event });
 Click.associate({ Offer, EventHistory });
 
 
@@ -41,26 +41,27 @@ const getOffers = async (req, res) => {
             // Step 2.2: Check if the user has completed all events of this offer
             const completedEvents = await EventHistory.findOne({
                 where: {
-                  user_id,
-                  campaign_id: offer.id,
-                  status: "completed",
+                    user_id,
+                    campaign_id: offer.id,
+                    status: "completed",
                 },
                 include: [
-                  {
-                    model: Event,
-                    as: "event", // ✅ Ensure this alias matches EventHistory.belongsTo(Event, { as: "event" })
-                    where: {
-                      id: events.map(event => event.id),
+                    {
+                        model: Event,
+                        as: "event",
+                        where: {
+                            id: events.map(event => event.id), // Match only the offer's events
+                        },
+                        required: true,
                     },
-                    required: true,
-                  },
                 ],
-              });
-              
-              // ✅ Fix: Check if completedEvents exists before accessing .length
-              if (!completedEvents || !Array.isArray(completedEvents) || completedEvents.length !== events.length) {
+            });
+
+            // If the number of completed events equals the total events of the offer, it means all are completed
+            if (completedEvents.length !== events.length) {
+                // Add offer to filtered list if not all events are completed
                 filteredOffers.push(offer);
-              }
+            }
         }
 
         return res.status(200).json({
