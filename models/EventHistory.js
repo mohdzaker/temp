@@ -38,10 +38,9 @@ const EventHistory = sequelize.define("EventHistory", {
 
 // Define associations
 EventHistory.associate = (models) => {
-  EventHistory.belongsTo(models.Offer, { 
-    foreignKey: "campaign_id", 
-    as: "campaign" 
-  });
+  EventHistory.belongsTo(models.Offer, { foreignKey: "campaign_id", as: "offer" });
+  EventHistory.belongsTo(models.Event, { foreignKey: "event_id", as: "event" }); // ✅ Add this line
+  EventHistory.belongsTo(models.Click, { foreignKey: "click_id", as: "click" });
 
   if (models.Click) {
     EventHistory.belongsTo(models.Click, { foreignKey: "clickHash", targetKey: "clickHash", as: "click" });
