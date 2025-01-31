@@ -37,8 +37,8 @@ const getOffers = async (req, res) => {
         attributes: ["id"],
       });
 
-      // Step 2.2: Check if the user has completed all events of this offer
-      const completedEvents = await EventHistory.findOne({
+      // Step 2.2: Check if the user has completed any events of this offer
+      const completedEvents = await EventHistory.findAll({
         where: {
           user_id,
           campaign_id: offer.id,
@@ -56,8 +56,8 @@ const getOffers = async (req, res) => {
         ],
       });
 
-      // Check if completedEvents is not null and compare lengths
-      if (completedEvents && completedEvents.length == events.length) {
+      // Check if the number of completed events matches the total events of the offer
+      if (completedEvents.length !== events.length) {
         // Add offer to filtered list if not all events are completed
         filteredOffers.push(offer);
       }
