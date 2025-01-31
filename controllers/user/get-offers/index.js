@@ -3,7 +3,7 @@ import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
 
-Offer.associate({ Click, Event }); // ✅ Include Event
+Offer.associate({ Event }); // ✅ Include Event
 Event.associate({ Offer, EventHistory });
 EventHistory.associate({ Offer, Click, Event });
 Click.associate({ Offer, EventHistory });
