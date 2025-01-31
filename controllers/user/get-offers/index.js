@@ -1,5 +1,3 @@
-import Offer from "../../../models/Offer.js";
-import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
 import EventHistory from "../../../models/EventHistory.js";
 import models from "../../../models/index.js";
