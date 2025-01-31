@@ -1,5 +1,3 @@
-import Event from "../../../models/Event.js";
-import EventHistory from "../../../models/EventHistory.js";
 import models from "../../../models/index.js";
 const { Offer, Click, Event, EventHistory } = models;
 
