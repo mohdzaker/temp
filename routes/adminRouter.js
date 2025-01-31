@@ -12,6 +12,8 @@ import sendReward from "../controllers/admin/send-reward.js";
 import { setSecretKey } from "../controllers/admin/secret-key/index.js";
 import { getDashboardData } from "../controllers/admin/dashboard/index.js";
 import getReferHistory from "../controllers/admin/refer-history/index.js";
+import getTransactions from "../controllers/admin/transaction-history/index.js";
+import getOfferHistory from "../controllers/admin/offer-history/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1166,12 +1168,290 @@ adminRouter.get("/get-user-by-id", authAdmin, getUserById);
  */
 
 adminRouter.post("/send-reward", authAdmin, sendReward);
+/**
+ * @swagger
+ * /api/admin/set-secret-key:
+ *   post:
+ *     summary: Set or update the secret key
+ *     tags: [Security]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - secret_key
+ *             properties:
+ *               secret_key:
+ *                 type: string
+ *                 example: "my-secure-secret-key"
+ *     responses:
+ *       200:
+ *         description: Secret key set successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Secret key set successfully
+ *       400:
+ *         description: Secret key is required
+ *       500:
+ *         description: Failed to set secret key
+ */
 
 adminRouter.post("/set-secret-key",authAdmin, setSecretKey);
+/**
+ * @swagger
+ * /api/admin/dashboard:
+ *   get:
+ *     summary: Get dashboard statistics
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Dashboard data fetched successfully.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalUsers:
+ *                       type: integer
+ *                       example: 1000
+ *                     totalBannedUsers:
+ *                       type: integer
+ *                       example: 50
+ *                     totalOffers:
+ *                       type: integer
+ *                       example: 200
+ *                     totalDisabledOffers:
+ *                       type: integer
+ *                       example: 20
+ *                     totalWithdraw:
+ *                       type: integer
+ *                       example: 500
+ *                     totalWithdrawAmout:
+ *                       type: number
+ *                       format: float
+ *                       example: 25000.75
+ *                     totalSuccessWithdraw:
+ *                       type: integer
+ *                       example: 300
+ *                     totalSuccessWithdrawAmout:
+ *                       type: number
+ *                       format: float
+ *                       example: 15000.50
+ *       500:
+ *         description: Internal Server Error
+ */
 
 adminRouter.get("/dashboard", authAdmin, getDashboardData);
+/**
+ * @swagger
+ * /api/admin/refer-history:
+ *   get:
+ *     summary: Get referral history for a user
+ *     tags: [Referral]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: Number of records per page
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 example: 123
+ *     responses:
+ *       200:
+ *         description: Referral history fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       user_id:
+ *                         type: integer
+ *                         example: 123
+ *                       refer_commission:
+ *                         type: number
+ *                         format: float
+ *                         example: 50.75
+ *                       ReferredUser:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                             example: 456
+ *                           username:
+ *                             type: string
+ *                             example: johndoe
+ *                           email:
+ *                             type: string
+ *                             example: johndoe@example.com
+ *                           mobileNumber:
+ *                             type: string
+ *                             example: "9876543210"
+ *                           profilePic:
+ *                             type: string
+ *                             example: "https://example.com/profile.jpg"
+ *                 totalCommission:
+ *                   type: number
+ *                   format: float
+ *                   example: 500.00
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal Server Error
+ */
 
 adminRouter.get("/refer-history", authAdmin, getReferHistory);
+/**
+ * @swagger
+ * /api/admin/transaction-history:
+ *   get:
+ *     summary: Get transaction history for a user
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: Number of records per page
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 example: 123
+ *     responses:
+ *       200:
+ *         description: Transaction history fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       user_id:
+ *                         type: integer
+ *                         example: 123
+ *                       amount:
+ *                         type: number
+ *                         format: float
+ *                         example: 150.75
+ *                       type:
+ *                         type: string
+ *                         example: deposit
+ *                       status:
+ *                         type: string
+ *                         example: completed
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-01-30T12:34:56.789Z"
+ *                 total:
+ *                   type: integer
+ *                   example: 50
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal Server Error
+ */
+
+adminRouter.get("/transaction-history", authAdmin, getTransactions);
+
+adminRouter.get("/offer-history", authAdmin, getOfferHistory);
 
 
 export default adminRouter;

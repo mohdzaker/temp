@@ -37,10 +37,11 @@ const Event = sequelize.define("Event", {
 
 // Ensure associations are defined
 Event.associate = (models) => {
-  Event.belongsTo(models.Offer, { foreignKey: "campaign_id", as: "offer" });
+  Event.belongsTo(models.Offer, { foreignKey: "campaign_id", as: "offer" }); // ✅ Ensure alias matches the query
   if (models.EventHistory) {
     Event.hasMany(models.EventHistory, { foreignKey: "event_id", as: "eventHistories" });
   }
 };
+
 
 export default Event;
