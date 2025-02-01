@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import axios from "axios";
+
 export const setUserEmail = async (email) => {
   const ONESIGNAL_APP_ID = process.env.ONE_SIGNAL_APP_ID;
   const ONESIGNAL_API_KEY = process.env.ONE_SIGNAL_API_KEY;
@@ -26,18 +28,18 @@ export const setUserEmail = async (email) => {
     console.log("ℹ️ Email not found in OneSignal. Proceeding to set it...");
   }
 
-  // Step 2: If email is not set, register it in OneSignal
+  // Step 2: If email is not set, register it in OneSignal and add email subscription
   const userData = {
     properties: {
       language: "en",
       country: "US",
     },
     identity: { external_id: email },
-    subscriptions: [{ type: "Email", token: email }],
   };
 
   try {
-    const response = await axios.post(
+    // Creating the user
+    const userResponse = await axios.post(
       `https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/users`,
       userData,
       {
@@ -48,16 +50,36 @@ export const setUserEmail = async (email) => {
       }
     );
 
+    // Adding email subscription to the user
+    const subscriptionData = {
+      subscription: {
+        type: "Email",
+        token: email, // The email to subscribe
+      },
+    };
+
+    const subscriptionResponse = await axios.post(
+      `https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/users/by/external_id/${email}/subscriptions`,
+      subscriptionData,
+      {
+        headers: {
+          accept: "application/json",
+          Authorization: `Basic ${ONESIGNAL_API_KEY}`,
+          "content-type": "application/json",
+        },
+      }
+    );
+
     return {
       status: "success",
-      message: "✅ Email set in OneSignal successfully!",
-      data: response.data,
+      message: "✅ Email and subscription set in OneSignal successfully!",
+      data: subscriptionResponse.data,
     };
   } catch (error) {
     console.error("❌ Error Setting Email:", error.response?.data || error);
     return {
       status: "error",
-      message: "❌ Failed to set email in OneSignal!",
+      message: "❌ Failed to set email and subscription in OneSignal!",
       error: error.response?.data || error,
     };
   }
