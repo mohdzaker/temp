@@ -112,7 +112,7 @@ export const sendNotificationByEmail = async (title, description, email) => {
       contents: { en: description }, // Notification body
       headings: { en: title }, // Notification title
       filters: [{ field: "email", value: email }],
-      included_segments: [email] // Filter by email
+      included_segments: ["hehehehheh2h"] // Filter by email
     };
   
     try {

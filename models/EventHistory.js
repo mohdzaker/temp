@@ -2,8 +2,6 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
 import Offer from "./Offer.js";
-import Click from "./Click.js";
-import Event from "./Event.js";
 
 const EventHistory = sequelize.define("EventHistory", {
   id: {

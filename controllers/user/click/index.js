@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import Click from "../../../models/Click.js";
 import Event from "../../../models/Event.js";
 import Offer from "../../../models/Offer.js";
+import EventHistory from "../../../models/EventHistory.js"; 
 import useragent from "useragent"; 
 
 const clickHandler = async (req, res) => {
@@ -43,7 +44,6 @@ const clickHandler = async (req, res) => {
       });
     }
 
-
     const ipAddress =
       req.ip ||
       req.headers["x-forwarded-for"]?.split(",")[0] ||
@@ -67,13 +67,31 @@ const clickHandler = async (req, res) => {
       browser_type: browserType,
     });
 
+    // Fetch all events related to the offer (campaign_id)
+    const events = await Event.findAll({
+      where: {
+        campaign_id: campaign_id,
+      },
+    });
+
+    // Create EventHistory for each event related to the campaign
+    for (let event of events) {
+      await EventHistory.create({
+        user_id,
+        clickHash,
+        campaign_id,
+        event_id: event.id,
+        status: "pending", // Set the status to 'pending'
+      });
+    }
+
     let tracking_link = checkCampaignExists.tracking_link;
     tracking_link = tracking_link.replace("{click_id}", clickHash);
     tracking_link = tracking_link.replace("{gaid}", gaid);
 
     res.json({
       status: "success",
-      message: "Click recorded successfully!",
+      message: "Click recorded successfully! Events history added with pending status.",
       tracking_link,
     });
   } catch (error) {
