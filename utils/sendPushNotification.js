@@ -4,7 +4,6 @@ export const setUserEmail = async (email) => {
   const ONESIGNAL_APP_ID = process.env.ONE_SIGNAL_APP_ID;
   const ONESIGNAL_API_KEY = process.env.ONE_SIGNAL_API_KEY;
 
-  try {
     // Step 1: Check if the email is already registered in OneSignal
     const checkResponse = await axios.get(
       `https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/users/by/alias_label/external_id/${email}`,
@@ -22,9 +21,6 @@ export const setUserEmail = async (email) => {
         message: "✅ Email already registered in OneSignal!",
       };
     }
-  } catch (checkError) {
-    console.log("ℹ️ Email not found in OneSignal. Proceeding to set it...");
-  }
 
   // Step 2: If email is not set, register it in OneSignal and add email subscription
   const userData = {
@@ -35,7 +31,6 @@ export const setUserEmail = async (email) => {
     identity: { external_id: email },
   };
 
-  try {
     // Creating the user
     const userResponse = await axios.post(
       `https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/users`,
@@ -73,14 +68,7 @@ export const setUserEmail = async (email) => {
       message: "✅ Email and subscription set in OneSignal successfully!",
       data: subscriptionResponse.data,
     };
-  } catch (error) {
-    console.error("❌ Error Setting Email:", error.response?.data || error);
-    return {
-      status: "error",
-      message: "❌ Failed to set email and subscription in OneSignal!",
-      error: error.response?.data || error,
-    };
-  }
+  
 };
 
 
