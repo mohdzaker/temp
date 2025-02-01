@@ -8,7 +8,7 @@ import useragent from "useragent";
 const clickHandler = async (req, res) => {
   try {
     const user_id = req.user.id;
-    const { campaign_id, gaid } = req.body;
+    const { campaign_id } = req.body;
 
     if (!campaign_id) {
       return res.json({
@@ -17,12 +17,6 @@ const clickHandler = async (req, res) => {
       });
     }
 
-    if(!gaid){
-      return res.json({
-        status: "failed",
-        message: "Google Analytics ID is required!",
-      });
-    }
 
     const checkCampaignExists = await Offer.findOne({
       where: {
