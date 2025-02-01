@@ -51,7 +51,7 @@ export const updateUserBanStatus = async (req, res) => {
 
 export const getUserById = async (req, res) => {
     try {
-        const { id } = req.body; 
+        const { id } = req.query; 
         const user = await User.findByPk(id); 
         if (!user) {
             return res.status(404).json({
