@@ -1,7 +1,5 @@
 import axios from "axios";
 
-import axios from "axios";
-
 export const setUserEmail = async (email) => {
   const ONESIGNAL_APP_ID = process.env.ONE_SIGNAL_APP_ID;
   const ONESIGNAL_API_KEY = process.env.ONE_SIGNAL_API_KEY;
