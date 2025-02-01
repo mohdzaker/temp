@@ -88,17 +88,17 @@ export const subcribeEmail = async (email) => {
             }
           );
 
-          return res.status(200).json({
+          return {
             status: "success",
             message: "�� Email subscription set successfully!",
             data: subscriptionResponse.data,
-          });
+          };
     } catch (error) {
         console.log(error.message);
-        return res.status(500).json({
+        return {
             status: "failed",
             message: "Failed to subscribe email",
-        });
+        };
     }
 }
 
