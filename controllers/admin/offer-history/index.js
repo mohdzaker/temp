@@ -2,6 +2,7 @@ import EventHistory from "../../../models/EventHistory.js"
 import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js"
 
+
 const getOfferHistory = async (req, res) => {
   try {
     const {user_id} = req.body;
@@ -50,10 +51,6 @@ const getOfferHistory = async (req, res) => {
     });
   }
 };
-
-import EventHistory from "../../../models/EventHistory.js";
-import Offer from "../../../models/Offer.js";
-import Click from "../../../models/Click.js";
 
 export const getAllOfferHistory = async (req, res) => {
   try {
