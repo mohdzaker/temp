@@ -63,7 +63,7 @@ export const getAllOfferHistory = async (req, res) => {
       include: [
         {
           model: EventHistory,
-          as: "eventHistory",
+          as: "eventHistories",
           required: false,
         },
         {
