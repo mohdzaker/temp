@@ -33,7 +33,7 @@ export const setUserEmail = async (email) => {
       country: "US",
     },
     identity: { external_id: email },
-    subscriptions: [{ type: "email", token: email }],
+    subscriptions: [{ type: "Email", token: email }],
   };
 
   try {
