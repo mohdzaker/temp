@@ -51,8 +51,7 @@ export const setUserEmail = async (email) => {
 
     return {
       status: "success",
-      message: "✅ Email and subscription set in OneSignal successfully!",
-      data: subscriptionResponse.data,
+      message: "✅ Email set successfully!",
     };
   } catch (error) {
     console.error("❌ Error Setting Email:", error.response?.data || error);
