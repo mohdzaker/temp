@@ -14,6 +14,7 @@ import { getDashboardData } from "../controllers/admin/dashboard/index.js";
 import getReferHistory from "../controllers/admin/refer-history/index.js";
 import getTransactions from "../controllers/admin/transaction-history/index.js";
 import getOfferHistory from "../controllers/admin/offer-history/index.js";
+import sendNotification from "../controllers/admin/send-notification/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1453,5 +1454,5 @@ adminRouter.get("/transaction-history", authAdmin, getTransactions);
 
 adminRouter.get("/offer-history", authAdmin, getOfferHistory);
 
-
+adminRouter.post("/send-notification", authAdmin, sendNotification);
 export default adminRouter;
