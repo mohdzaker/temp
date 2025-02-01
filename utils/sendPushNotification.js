@@ -111,7 +111,8 @@ export const sendNotificationByEmail = async (title, description, email) => {
       app_id: ONESIGNAL_APP_ID,
       contents: { en: description }, // Notification body
       headings: { en: title }, // Notification title
-      filters: [{ field: "email", value: email }], // Filter by email
+      filters: [{ field: "email", value: email }],
+      included_segments: [email] // Filter by email
     };
   
     try {
