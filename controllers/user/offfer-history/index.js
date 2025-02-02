@@ -16,6 +16,13 @@ const getOfferHistory = async (req, res) => {
           model: EventHistory,
           as: "eventHistory",
           required: false,
+          include: [
+            {
+              model: Event,
+              as: "event",
+              attributes: ["event_title", "event_short_desc"],
+            },
+          ],
         },
         {
           model: Offer,
