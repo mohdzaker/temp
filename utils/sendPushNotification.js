@@ -6,11 +6,11 @@ export const sendNotificationToUser = async (title, description, externalId) => 
     method: 'POST',
     headers: {
       accept: 'application/json',
-      Authorization: `Key ${process.env.ONE_SIGNAL_APP_ID}`,
+      Authorization: `Key ${process.env.ONE_SIGNAL_API_KEY}`,
       'content-type': 'application/json'
     },
     data: {
-      app_id: 'YOUR_APP_ID',
+      app_id: process.env.ONE_SIGNAL_APP_ID,
       data: { foo: 'bar' },
       headings: { en: title },
       contents: { en: description },
