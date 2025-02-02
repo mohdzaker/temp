@@ -1,4 +1,4 @@
-import EventHistory from "../../../models/EventHistory.js"
+import EventHistory from "../../../models/EventHistory.js";
 import Offer from "../../../models/Offer.js";
 import Click from "../../../models/Click.js"
 
