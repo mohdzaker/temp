@@ -1,18 +1,15 @@
-import { sendNotificationByEmail, setUserEmail, subcribeEmail } from "../../../utils/sendPushNotification.js";
+import { sendNotification } from "../../../utils/sendPushNotification.js";
 
 const sendNotification = async (req, res) => {
     try {
-        const { email } = req.body;
+        const {user_id } = req.body;
 
-        const setEmail = await setUserEmail(email);
-        if(setEmail.status === 'success'){
-            await subcribeEmail(email)
-            const sendNoti = await sendNotificationByEmail("Test", "This is a test notification!", email);
-            return res.status(200).json({
-                status: "success",
-                message: "Notification sent successfully"
-            });
-        }
+        await sendNotification("Test", "This is a test notification", user_id);
+
+        return res.status(200).json({
+            status: "success",
+            message: "Notification sent successfully"
+        });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({
