@@ -19,6 +19,7 @@ import { approveWithdraw, payToUser, rejectWithdraw } from "../controllers/admin
 import getWithdrawHistory from "../controllers/admin/withdraw-history/index.js";
 import { getAdmins, removeAdmin } from "../controllers/admin/admin/index.js";
 import { togglePostback } from "../controllers/admin/toggle-postback/index.js";
+import { getDatewiseClicks, getDatewiseCompleted } from "../controllers/admin/click-graph/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1477,5 +1478,9 @@ adminRouter.get("/get-admins", authAdmin, getAdmins);
 adminRouter.post("/remove-admin", authAdmin, removeAdmin);
 
 adminRouter.post("/toggle-postback", authAdmin, togglePostback);
+
+adminRouter.get("/click-graph/clicks", authAdmin, getDatewiseClicks);
+
+adminRouter.get("/click-graph/conversion/completed", authAdmin, getDatewiseCompleted);
 
 export default adminRouter;
