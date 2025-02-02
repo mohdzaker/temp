@@ -21,7 +21,7 @@ const getOfferHistory = async (req, res) => {
             {
               model: Event,
               as: "event",
-              attributes: ["event_title", "event_short_desc"],
+              attributes: ["event_title", "event_short_desc", "event_amount"],
             },
           ],
         },
