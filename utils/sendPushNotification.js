@@ -14,7 +14,7 @@ export const sendNotificationToUser = async (title, description, externalId) => 
       data: { foo: 'bar' },
       headings: { en: title },
       contents: { en: description },
-      include_external_user_ids: [externalId],
+      include_external_user_ids: [`${externalId}`],
       channel_for_external_user_ids: 'push'
     }
   };
