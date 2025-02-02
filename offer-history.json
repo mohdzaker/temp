@@ -1,0 +1,74 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "id": 24,
+            "clickHash": "8d95b30f-eb44-4d7c-a06a-d1143b422556",
+            "user_id": 10,
+            "campaign_id": 1,
+            "status": "completed",
+            "ip_address": "::ffff:127.0.0.1",
+            "referer": "No referer",
+            "user_agent": "PostmanRuntime/7.43.0",
+            "browser_type": "Other",
+            "createdAt": "2025-02-01T14:17:57.000Z",
+            "updatedAt": "2025-02-01T14:22:18.000Z",
+            "eventHistories": [
+                {
+                    "id": 9,
+                    "user_id": 10,
+                    "clickHash": "8d95b30f-eb44-4d7c-a06a-d1143b422556",
+                    "campaign_id": 1,
+                    "event_id": 1,
+                    "status": "completed",
+                    "createdAt": "2025-02-01T14:17:57.000Z",
+                    "updatedAt": "2025-02-01T14:22:18.000Z"
+                }
+            ],
+            "campaign": {
+                "id": 1,
+                "campaign_name": "Angleone",
+                "short_description": "Angleone",
+                "tracking_link": "https://Angleone.com/?c={click_id}",
+                "campaign_logo": "Angleone",
+                "status": "active"
+            }
+        },
+        {
+            "id": 23,
+            "clickHash": "34a3ff11-7e22-471e-bab1-a5b8f7716bf9",
+            "user_id": 10,
+            "campaign_id": 1,
+            "status": "pending",
+            "ip_address": "::ffff:127.0.0.1",
+            "referer": "No referer",
+            "user_agent": "PostmanRuntime/7.43.0",
+            "browser_type": "Other",
+            "createdAt": "2025-02-01T14:16:18.000Z",
+            "updatedAt": "2025-02-01T14:16:18.000Z",
+            "eventHistories": [
+                {
+                    "id": 8,
+                    "user_id": 10,
+                    "clickHash": "34a3ff11-7e22-471e-bab1-a5b8f7716bf9",
+                    "campaign_id": 1,
+                    "event_id": 1,
+                    "status": "pending",
+                    "createdAt": "2025-02-01T14:16:18.000Z",
+                    "updatedAt": "2025-02-01T14:16:18.000Z"
+                }
+            ],
+            "campaign": {
+                "id": 1,
+                "campaign_name": "Angleone",
+                "short_description": "Angleone",
+                "tracking_link": "https://Angleone.com/?c={click_id}",
+                "campaign_logo": "Angleone",
+                "status": "active"
+            }
+        }
+    ],
+    "currentPage": 1,
+    "totalPages": 1,
+    "totalRecords": 2
+}

@@ -1,12 +1,12 @@
-import EventHistory from "../../../models/EventHistory.js"
+import EventHistory from "../../../models/EventHistory.js";
+import Event from "../../../models/Event.js"; // Import Event model
 import Offer from "../../../models/Offer.js";
-import Click from "../../../models/Click.js"
-
+import Click from "../../../models/Click.js";
 
 const getOfferHistory = async (req, res) => {
   try {
-    const {user_id} = req.body;
-    const { page = 1, limit = 10 } = req.query; 
+    const { user_id } = req.body;
+    const { page = 1, limit = 10 } = req.query;
 
     const offset = (page - 1) * limit;
 
@@ -17,19 +17,26 @@ const getOfferHistory = async (req, res) => {
           model: EventHistory,
           as: "eventHistory",
           required: false,
+          include: [
+            {
+              model: Event,
+              as: "event",
+              attributes: ["event_title", "event_short_desc"],
+            },
+          ],
         },
         {
           model: Offer,
           as: "campaign",
           attributes: [
-            'id', 
-            'campaign_name', 
-            'short_description', 
-            'tracking_link', 
-            'campaign_logo', 
-            'status'
-          ]
-        }
+            "id",
+            "campaign_name",
+            "short_description",
+            "tracking_link",
+            "campaign_logo",
+            "status",
+          ],
+        },
       ],
       order: [["id", "DESC"]],
       limit: parseInt(limit),
@@ -54,34 +61,41 @@ const getOfferHistory = async (req, res) => {
 
 export const getAllOfferHistory = async (req, res) => {
   try {
-    const { campaign_id, page = 1, limit = 10 } = req.query; 
+    const { campaign_id, page = 1, limit = 10 } = req.query;
 
     const offset = (page - 1) * limit;
 
     const { rows, count } = await Click.findAndCountAll({
-      where: campaign_id ? { campaign_id } : {}, 
+      where: campaign_id ? { campaign_id } : {},
       include: [
         {
           model: EventHistory,
           as: "eventHistories",
           required: false,
+          include: [
+            {
+              model: Event,
+              as: "event",
+              attributes: ["event_title", "event_short_desc"],
+            },
+          ],
         },
         {
           model: Offer,
           as: "campaign",
           attributes: [
-            'id', 
-            'campaign_name', 
-            'short_description', 
-            'tracking_link', 
-            'campaign_logo', 
-            'status'
-          ]
-        }
+            "id",
+            "campaign_name",
+            "short_description",
+            "tracking_link",
+            "campaign_logo",
+            "status",
+          ],
+        },
       ],
-      order: [["id", "DESC"]], // Order by the most recent clicks
-      limit: parseInt(limit), // Pagination limit
-      offset: parseInt(offset), 
+      order: [["id", "DESC"]],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
     });
 
     res.json({
@@ -99,7 +113,5 @@ export const getAllOfferHistory = async (req, res) => {
     });
   }
 };
-
-
 
 export default getOfferHistory;
