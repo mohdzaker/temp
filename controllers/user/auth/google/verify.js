@@ -62,6 +62,7 @@ const verifyGoogle = async (req, res) => {
         user_id: user.id,
         amount: 5,
         description: "Signup bonus",
+        trans_type: "credit",
       });
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
