@@ -5,13 +5,13 @@ import Click from "../../../models/Click.js";
 
 export const getOfferHistoryByUserId = async (req, res) => {
   try {
-    const { user_id } = req.params; // Extract user_id from params
+    const { user_id, offer_id } = req.params; // Extract user_id from params
     const { page = 1, limit = 10 } = req.query;
 
     const offset = (page - 1) * limit;
 
     const { rows, count } = await Click.findAndCountAll({
-      where: { user_id },
+      where: { user_id, campaign_id: offer_id },
       include: [
         {
           model: EventHistory,
