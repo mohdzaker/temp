@@ -13,7 +13,7 @@ import { setSecretKey } from "../controllers/admin/secret-key/index.js";
 import { getDashboardData } from "../controllers/admin/dashboard/index.js";
 import getReferHistory from "../controllers/admin/refer-history/index.js";
 import getTransactions from "../controllers/admin/transaction-history/index.js";
-import getOfferHistory, { getAllOfferHistory } from "../controllers/admin/offer-history/index.js";
+import getOfferHistory, { getAllOfferHistory, getOfferHistoryByUserId } from "../controllers/admin/offer-history/index.js";
 import sendNotification from "../controllers/admin/send-notification/index.js";
 import { approveWithdraw, payToUser, rejectWithdraw } from "../controllers/admin/withdraw/index.js";
 import getWithdrawHistory from "../controllers/admin/withdraw-history/index.js";
@@ -1467,4 +1467,6 @@ adminRouter.post("/reject-withdraw", authAdmin, rejectWithdraw);
 adminRouter.post("/pay-withdraw", authAdmin, payToUser);
 
 adminRouter.post("/user-withdraw-history", authAdmin, getWithdrawHistory);
+
+adminRouter.get("/get-user-offer-history", authAdmin, getOfferHistoryByUserId);
 export default adminRouter;
