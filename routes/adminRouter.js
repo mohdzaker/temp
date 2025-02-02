@@ -15,6 +15,7 @@ import getReferHistory from "../controllers/admin/refer-history/index.js";
 import getTransactions from "../controllers/admin/transaction-history/index.js";
 import getOfferHistory, { getAllOfferHistory } from "../controllers/admin/offer-history/index.js";
 import sendNotification from "../controllers/admin/send-notification/index.js";
+import { approveWithdraw, payToUser, rejectWithdraw } from "../controllers/admin/withdraw/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1457,4 +1458,10 @@ adminRouter.get("/offer-history", authAdmin, getOfferHistory);
 adminRouter.post("/send-notification", authAdmin, sendNotification);
 
 adminRouter.get("/get-all-offer-history", authAdmin, getAllOfferHistory);
+
+adminRouter.post("/approve-withdraw", authAdmin, approveWithdraw);
+
+adminRouter.post("/reject-withdraw", authAdmin, rejectWithdraw);
+
+adminRouter.post("/pay-withdraw", authAdmin, payToUser);
 export default adminRouter;
