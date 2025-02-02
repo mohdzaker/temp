@@ -7,8 +7,9 @@ import User from "../../../models/User.js";
 import Transaction from "../../../models/Transaction.js";
 import Referlist from "../../../models/Referlist.js";
 import SecretKey from "../../../models/SecureKey.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
 
-const handlePostback = async (req, res) => {
+export const togglePostback = async (req, res) => {
   try {
     const { click_id, event, secret_key } = req.query;
 
@@ -206,12 +207,10 @@ const handlePostback = async (req, res) => {
         : "Event completed successfully! Remaining events exist.",
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
+    console.log(error);
+    res.status(500).json({
       status: "failed",
-      message: "An error occurred while handling the postback",
+      message: "Error toggling postback",
     });
   }
 };
-
-export default handlePostback;

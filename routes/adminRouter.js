@@ -18,6 +18,7 @@ import sendNotification from "../controllers/admin/send-notification/index.js";
 import { approveWithdraw, payToUser, rejectWithdraw } from "../controllers/admin/withdraw/index.js";
 import getWithdrawHistory from "../controllers/admin/withdraw-history/index.js";
 import { getAdmins, removeAdmin } from "../controllers/admin/admin/index.js";
+import { togglePostback } from "../controllers/admin/toggle-postback/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1473,6 +1474,8 @@ adminRouter.get("/get-user-offer-history", authAdmin, getOfferHistoryByUserId);
 
 adminRouter.get("/get-admins", authAdmin, getAdmins);
 
-adminRouter.get("/remove-admin", authAdmin, removeAdmin);
+adminRouter.post("/remove-admin", authAdmin, removeAdmin);
+
+adminRouter.post("/toggle-postback", authAdmin, togglePostback);
 
 export default adminRouter;
