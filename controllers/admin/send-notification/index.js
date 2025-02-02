@@ -1,10 +1,10 @@
-import { sendNotification } from "../../../utils/sendPushNotification.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
 
 const sendNotification = async (req, res) => {
     try {
         const {user_id } = req.body;
 
-        await sendNotification("Test", "This is a test notification", user_id);
+        await sendNotificationToUser("Test", "This is a test notification", user_id);
 
         return res.status(200).json({
             status: "success",

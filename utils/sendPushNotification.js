@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const sendNotification = async (title, description, externalId) => {
+export const sendNotificationToUser = async (title, description, externalId) => {
   const url = 'https://api.onesignal.com/notifications?c=push';
   const options = {
     method: 'POST',
