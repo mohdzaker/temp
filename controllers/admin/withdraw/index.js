@@ -14,7 +14,7 @@ export const approveWithdraw = async (req, res) => {
       });
     }
 
-    const checkWithdraw = await Withdraw.fineOne({
+    const checkWithdraw = await Withdraw.findOne({
       where: { user_id, order_id, status: "pending" },
     });
 
