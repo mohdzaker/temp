@@ -76,41 +76,41 @@ export const getUserById = async (req, res) => {
 };
 
 export const getUsersGroupedByDate = async (req, res) => {
-    try {
-      const { page = 1, limit = 10 } = req.query; // Default pagination values
-      const offset = (page - 1) * limit;
-  
-      // Get total unique registration dates
-      const totalRecords = await User.count({
-        distinct: true,
-        col: Sequelize.literal("DATE(createdAt)"), // Use literal instead of fn
-      });
-  
-      // Fetch users grouped by date
-      const users = await User.findAll({
-        attributes: [
-          [Sequelize.literal("DATE(createdAt)"), "registration_date"], // Extract date
-          [Sequelize.fn("COUNT", Sequelize.col("id")), "user_count"], // Count users per date
-        ],
-        group: [Sequelize.literal("DATE(createdAt)")], // Group by date
-        order: [[Sequelize.literal("DATE(createdAt)"), "DESC"]],
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        raw: true, // Ensures a cleaner response
-      });
-  
-      res.json({
-        status: "success",
-        data: users,
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(totalRecords / limit),
-        totalRecords: totalRecords,
-      });
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({
-        status: "failed",
-        message: "Failed to fetch users",
-      });
-    }
-  };
+  try {
+    const { page = 1, limit = 10 } = req.query; // Default pagination values
+    const offset = (page - 1) * limit;
+
+    // Get total unique registration dates
+    const totalRecords = await User.count({
+      distinct: true,
+      col: "createdAt", // Count based on unique dates
+    });
+
+    // Fetch users grouped by date
+    const users = await User.findAll({
+      attributes: [
+        [Sequelize.fn("DATE", Sequelize.col("createdAt")), "registration_date"], // Extract date
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "user_count"], // Count users per date
+      ],
+      group: [Sequelize.fn("DATE", Sequelize.col("createdAt"))], // Group by date
+      order: [[Sequelize.fn("DATE", Sequelize.col("createdAt")), "DESC"]],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      raw: true, // Ensures a cleaner response
+    });
+
+    res.json({
+      status: "success",
+      data: users,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalRecords / limit),
+      totalRecords: totalRecords,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      status: "failed",
+      message: "Failed to fetch users",
+    });
+  }
+};
