@@ -51,7 +51,7 @@ export const rejectWithdraw = async (req, res) => {
       });
     }
     const checkWithdraw = await Withdraw.findOne({
-      where: { user_id, order_id, status: "pending" },
+      where: { user_id, order_id, status: "pending" || "processing"},
     });
     if (!checkWithdraw) {
       return res.status(404).json({
