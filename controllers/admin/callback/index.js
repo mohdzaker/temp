@@ -3,7 +3,8 @@ import SecretKey from "../../../models/SecureKey.js";
 
 const callback = async (req, res) => {
   try {
-    const { data, secret_key } = req.body;
+    const { data } = req.body;
+    const { secret_key } = req.query;
     
     const checkSecretKey = await SecretKey.findOne({
       where: {
