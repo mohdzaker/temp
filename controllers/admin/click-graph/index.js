@@ -1,3 +1,4 @@
+import sequelize from "../../../config/index.js";
 import Click from "../../../models/Click.js";
 
 export const getDatewiseClicks = async (req, res) => {
