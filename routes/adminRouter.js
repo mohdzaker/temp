@@ -7,7 +7,7 @@ import { addOffer, deleteOffer, editOffer, getAllOffers, setOfferStatus } from "
 import { addEvent, editEvent, getAllOffersWithEvents, getOfferByIdWithEvents } from "../controllers/admin/event/index.js";
 import getPendingWithdraw from "../controllers/admin/payout/index.js";
 import getConfig from "../controllers/admin/get-config/index.js";
-import getUsers, { getUserById, updateUserBanStatus } from "../controllers/admin/get-users/index.js";
+import getUsers, { getUserById, getUsersGroupedByDate, updateUserBanStatus } from "../controllers/admin/get-users/index.js";
 import sendReward from "../controllers/admin/send-reward.js";
 import { setSecretKey } from "../controllers/admin/secret-key/index.js";
 import { getDashboardData } from "../controllers/admin/dashboard/index.js";
@@ -1485,5 +1485,7 @@ adminRouter.get("/click-graph/clicks", authAdmin, getDatewiseClicks);
 adminRouter.get("/click-graph/conversion/completed", authAdmin, getDatewiseCompleted);
 
 adminRouter.post("/callback", callback);
+
+adminRouter.get("/user-graph", authAdmin, getUsersGroupedByDate);
 
 export default adminRouter;
