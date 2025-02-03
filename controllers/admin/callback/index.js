@@ -1,8 +1,23 @@
 import Withdraw from "../../../models/Withdraw.js";
+import SecretKey from "../../../models/SecureKey.js";
 
 const callback = async (req, res) => {
   try {
-    const { data } = req.body;
+    const { data, secret_key } = req.body;
+    
+    const checkSecretKey = await SecretKey.findOne({
+      where: {
+        secret_key,
+      },
+    });
+
+    if (!checkSecretKey) {
+      return res.status(401).json({
+        status: "failed",
+        message: "Invalid or expired secret key!",
+      });
+    }
+
     if (!data || !data.upi || !data.tnx_id || !data.order_id || !data.status) {
       return res.status(400).json({ message: "Invalid request data" });
     }
@@ -10,7 +25,6 @@ const callback = async (req, res) => {
     if (data.status == "success") {
       const withdraw = await Withdraw.findOneAndUpdate(
         {
-          tnx_id: data.tnx_id,
           order_id: data.order_id,
         },
         {
@@ -24,7 +38,6 @@ const callback = async (req, res) => {
     } else {
       const withdraw = await Withdraw.findOneAndUpdate(
         {
-          tnx_id: data.tnx_id,
           order_id: data.order_id,
         },
         {
