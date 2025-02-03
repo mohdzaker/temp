@@ -96,7 +96,7 @@ export const payToUser = async (req, res) => {
             });
         }
 
-        const user = await User.fineOne({
+        const user = await User.findOne({
             where: { id: user_id },
         });
 
