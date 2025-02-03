@@ -7,6 +7,7 @@ import User from "../../../models/User.js";
 import Transaction from "../../../models/Transaction.js";
 import Referlist from "../../../models/Referlist.js";
 import SecretKey from "../../../models/SecureKey.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
 
 const handlePostback = async (req, res) => {
   try {
