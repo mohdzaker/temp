@@ -75,47 +75,33 @@ export const getUserById = async (req, res) => {
     }
 };
 
-
 export const getUsersGroupedByDate = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query; // Default values
+    const { page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
+
+    // Get total unique registration dates
+    const totalRecords = await User.count({
+      distinct: true,
+      col: Sequelize.fn("DATE", Sequelize.col("createdAt")),
+    });
 
     // Fetch users grouped by date
     const users = await User.findAll({
       attributes: [
-        [Sequelize.fn("DATE", Sequelize.col("createdAt")), "registration_date"], // Extract date
+        [Sequelize.fn("DATE", Sequelize.col("createdAt")), "registration_date"], 
         [Sequelize.fn("COUNT", Sequelize.col("id")), "user_count"],
       ],
-      group: [Sequelize.fn("DATE", Sequelize.col("createdAt"))], // Group by date
+      group: [Sequelize.fn("DATE", Sequelize.col("createdAt"))],
       order: [[Sequelize.fn("DATE", Sequelize.col("createdAt")), "DESC"]],
       limit: parseInt(limit),
       offset: parseInt(offset),
-      raw: true, // Ensures a cleaner response
-    });
-
-    // Fetch detailed user profiles separately
-    const userProfiles = await User.findAll({
-      attributes: ["id", "username", "email", "profilePic", "createdAt"],
-      order: [["createdAt", "DESC"]],
-      limit: parseInt(limit),
-      offset: parseInt(offset),
-      raw: true,
-    });
-
-    const totalRecords = await User.count({
-      distinct: true,
-      col: "createdAt",
+      raw: true, 
     });
 
     res.json({
       status: "success",
-      data: users.map((group) => ({
-        ...group,
-        users: userProfiles.filter(
-          (user) => user.createdAt.toISOString().split("T")[0] === group.registration_date
-        ),
-      })),
+      data: users,
       currentPage: parseInt(page),
       totalPages: Math.ceil(totalRecords / limit),
       totalRecords: totalRecords,
