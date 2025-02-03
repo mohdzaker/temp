@@ -109,7 +109,7 @@ export const payToUser = async (req, res) => {
             checkWithdraw.status = "success";
             await checkWithdraw.save();
             res.json({
-                status: "success",
+                status: "processing",
                 message: "Withdrawal paid successfully",
             });
         }else{
