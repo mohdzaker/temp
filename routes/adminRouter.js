@@ -20,6 +20,7 @@ import getWithdrawHistory from "../controllers/admin/withdraw-history/index.js";
 import { getAdmins, removeAdmin } from "../controllers/admin/admin/index.js";
 import { togglePostback } from "../controllers/admin/toggle-postback/index.js";
 import { getDatewiseClicks, getDatewiseCompleted } from "../controllers/admin/click-graph/index.js";
+import callback from "../controllers/admin/callback/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1482,5 +1483,7 @@ adminRouter.post("/toggle-postback", authAdmin, togglePostback);
 adminRouter.get("/click-graph/clicks", authAdmin, getDatewiseClicks);
 
 adminRouter.get("/click-graph/conversion/completed", authAdmin, getDatewiseCompleted);
+
+adminRouter.post("/callback", callback);
 
 export default adminRouter;
