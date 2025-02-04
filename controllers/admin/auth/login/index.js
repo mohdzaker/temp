@@ -28,8 +28,8 @@ const adminLogin = async (req, res) => {
         message: "Admin not found!",
       });
     }
-
-    if (!bcrypt.compare(password, admin.password)) {
+    const checkPass = await bcrypt.compare(password, admin.password);
+    if (!checkPass) {
       return res.status(401).json({
         status: "failed",
         message: "Invalid password!",
