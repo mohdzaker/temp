@@ -54,6 +54,13 @@ const withdraw = async (req, res) => {
         comment,
         order_id
       );
+
+      if(payoutResponse.status !== 'success'){
+        return res.json({
+          status: "failed",
+          message: payoutResponse.message,
+        });
+      }
     }
 
     const txn_id = payoutResponse.tnx_id || null;
