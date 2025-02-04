@@ -55,7 +55,7 @@ const withdraw = async (req, res) => {
     await User.update({ balance: newBalance }, { where: { id: user } });
 
     const order_id = generateOrderId();
-    let payoutResponse = null;
+    let payoutResponse = { tnx_id: "", tnx_status: "pending", message: "" };
     if (amount <= 100) {
 
     payoutResponse = await initiatePayout(
@@ -74,7 +74,7 @@ const withdraw = async (req, res) => {
       }
     }
 
-    const txn_id = payoutResponse.tnx_id? payoutResponse.txn_id : null;
+    const txn_id = payoutResponse.tnx_id? payoutResponse.tnx_id : "";
     const txn_status =
       payoutResponse.tnx_status == "success" ? "processing" : "pending" || "pending";
 
