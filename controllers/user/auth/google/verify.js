@@ -57,7 +57,7 @@ const verifyGoogle = async (req, res) => {
       }
 
       if (!user.hasReceivedBonus) {
-        user.balance += 5;
+        user.balance += 7;
         user.hasReceivedBonus = true;
 
         await user.save();
