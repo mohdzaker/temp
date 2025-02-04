@@ -127,7 +127,6 @@ const initiateGoogle = async (req, res) => {
         const token = jwt.sign(
           { id: checkEmailExists.id },
           process.env.JWT_SECRET,
-          { expiresIn: "7d" }
         );
 
         return res.status(200).json({
@@ -146,7 +145,17 @@ const initiateGoogle = async (req, res) => {
         referedBy: referedById || 0,
         referCode,
       });
-      
+      const user = await User.findOne({
+        where: {
+          mobileNumber
+        }
+      })
+      await Transaction.create({
+        user_id: user.id,
+        amount: 7,
+        description: "Signup bonus",
+        trans_type: "credit",
+      });
       // Record the referral in Referlist when a new user is created
       if (referedById) {
         await Referlist.create({

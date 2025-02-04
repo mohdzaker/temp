@@ -114,19 +114,12 @@ const initiateTrueCallerCall = async (req, res) => {
           email,
         }
       });
-      if (!user.hasReceivedBonus) {
-        user.balance += 7;
-        user.hasReceivedBonus = true;
-
-        await user.save();
-
-        await Transaction.create({
-          user_id: user.id,
-          amount: 7,
-          description: "Signup bonus",
-          trans_type: "credit",
-        });
-      }
+      await Transaction.create({
+        user_id: user.id,
+        amount: 7,
+        description: "Signup bonus",
+        trans_type: "credit",
+      });
       const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET,);
 
       return res.status(201).json({

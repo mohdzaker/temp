@@ -56,19 +56,7 @@ const verifyGoogle = async (req, res) => {
         });
       }
 
-      if (!user.hasReceivedBonus) {
-        user.balance += 7;
-        user.hasReceivedBonus = true;
-
-        await user.save();
-
-        await Transaction.create({
-          user_id: user.id,
-          amount: 7,
-          description: "Signup bonus",
-          trans_type: "credit",
-        });
-      }
+      
 
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET,);
 

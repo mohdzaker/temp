@@ -47,11 +47,11 @@ const User = sequelize.define("User", {
   },
   balance: {
     type: Sequelize.DECIMAL(10, 2),
-    defaultValue: 0.00,
+    defaultValue: 7,
   },
   hasReceivedBonus: {
     type: Sequelize.BOOLEAN,
-    defaultValue: false,
+    defaultValue: true,
   }
 });
 
