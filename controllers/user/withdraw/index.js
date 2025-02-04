@@ -11,7 +11,7 @@ const withdraw = async (req, res) => {
     const user = req.user.id;
     const { upi_id, amount, comment = "HuntCash" } = req.body;
 
-    if (!upi_id || upi_id.trim() === "") {
+    if (!upi_id || upi_id === "") {
       return res.json({
         status: "failed",
         message: "Please enter a valid UPI ID!",
