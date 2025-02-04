@@ -86,7 +86,7 @@ const withdraw = async (req, res) => {
       amount,
       time: new Date(),
       withdraw_status: txn_status == "success" ? 2 : 3,
-      status: txn_status === "success" ? "processing" : "failed",
+      status: txn_status === "success" ? "processing" : "pending",
     });
 
     await Transaction.create({
