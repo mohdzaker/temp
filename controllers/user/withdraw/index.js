@@ -51,6 +51,19 @@ const withdraw = async (req, res) => {
       });
     }
 
+    const totalCreditAmount = await Transaction.sum('amount', { 
+      where: {
+        user_id: user,
+        type: "credit",
+      },
+    });
+    
+    if(amount > totalCreditAmount){
+      return res.json({
+        status: "failed",
+        message: "You have exceeded your credited amount.",
+      });
+    }
     const newBalance = userRecord.balance - amount;
     await User.update({ balance: newBalance }, { where: { id: user } });
 
