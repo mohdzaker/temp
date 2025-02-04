@@ -25,7 +25,6 @@ export const getDiff = async (req, res) => {
                 actual_balance: userRecord.balance,
                 total_credit_amount: totalCreditAmount,
                 totalWithdrawAmount,
-                difference: diff,
                 total_diff: diff - totalWithdrawAmount
             },
         });
