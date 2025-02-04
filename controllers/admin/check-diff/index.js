@@ -1,28 +1,40 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
-import Refund from "../../../models/Refund.js";
-import sequelize from "../../../config/index.js";
-import { sendNotificationToUser } from "../../../utils/notification.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
 
-export const checkAndProcessRefunds = async (req, res) => {
+export const getDiff = async (req, res) => {
     try {
-        await Refund.create({
-            user_id: 1,
-            email: "user@example.com",
-            amount: 10
-        })
+        const { user_id } = req.body;
+        const userRecord = await User.findOne({ where: { id: user_id } });
+        const totalCreditAmount = await Transaction.sum('amount', { 
+            where: {
+              user_id: user_id,
+              trans_type: "credit",
+            },
+          });
+          const totalWithdrawAmount = await Withdraw.sum('amount', { 
+            where: {
+              user_id: user_id,
+            },
+          });
+          const diff = totalCreditAmount - userRecord.balance;
 
-        return res.json({
+          return res.json({
             status: "success",
-            message: "Balance differences checked, refunds processed, and notifications sent.",
+            data: {
+                actual_balance: userRecord.balance,
+                total_credit_amount: totalCreditAmount,
+                totalWithdrawAmount,
+                total_diff: diff - totalWithdrawAmount
+            },
         });
-
+        await sendNotificationToUser("Refund Issued regarding your Withdrawal!", "Tap to view new balance!", userod)
     } catch (error) {
-        console.error(error.message);
+        console.log(error.message);
         res.status(500).json({
             status: "failed",
-            message: "An error occurred while processing refunds",
+            message: "An error occurred while fetching the difference",
         });
     }
-};
+}
