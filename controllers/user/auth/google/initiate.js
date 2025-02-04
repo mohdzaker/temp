@@ -7,7 +7,6 @@ import sendOTP from "../../../../utils/sendOtp.js";
 import jwt from "jsonwebtoken";
 import Referlist from "../../../../models/Referlist.js";  // Import Referlist model
 import Config from "../../../../models/Config.js";
-import Transaction from "../../../../models/Transaction.js";
 
 const initiateGoogle = async (req, res) => {
   try {
