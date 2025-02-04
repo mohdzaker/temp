@@ -165,9 +165,7 @@ const initiateTrueCaller = async (req, res) => {
           trans_type: "credit",
         });
       }
-      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, );
       return res
         .status(201)
         .json({ status: 201, message: "Registered successfully!", token });

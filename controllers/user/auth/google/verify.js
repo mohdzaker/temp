@@ -70,9 +70,7 @@ const verifyGoogle = async (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET,);
 
       return res.status(200).json({
         status: "success",
