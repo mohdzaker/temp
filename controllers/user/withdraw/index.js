@@ -85,7 +85,7 @@ const withdraw = async (req, res) => {
       order_id,
       amount,
       time: new Date(),
-      withdraw_status: txn_status == "success" ? 2 : 3,
+      withdraw_status: txn_status == "pending" ? 2 : 3,
       status: txn_status === "pending" ? "processing" : "pending",
     });
 
