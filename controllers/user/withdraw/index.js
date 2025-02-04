@@ -54,7 +54,7 @@ const withdraw = async (req, res) => {
     const totalCreditAmount = await Transaction.sum('amount', { 
       where: {
         user_id: user,
-        type: "credit",
+        trans_type: "credit",
       },
     });
     
