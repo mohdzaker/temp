@@ -14,7 +14,7 @@ export const checkAndProcessRefunds = async (req, res) => {
         await Refund.create({
             user_id,
             email: "user@example",
-            amount: finalDiff
+            amount: 66
         });
 
         return res.json({
