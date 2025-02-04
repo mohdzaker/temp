@@ -1,5 +1,6 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
+import Withdraw from "../../../models/Withdraw.js";
 
 export const getDiff = async (req, res) => {
     try {
@@ -11,7 +12,11 @@ export const getDiff = async (req, res) => {
               trans_type: "credit",
             },
           });
-
+          const totalWithdrawAmount = await Withdraw.sum('amount', { 
+            where: {
+              user_id: user_id,
+            },
+          });
           const diff = totalCreditAmount - userRecord.balance;
 
           return res.json({
@@ -19,6 +24,7 @@ export const getDiff = async (req, res) => {
             data: {
                 actual_balance: userRecord.balance,
                 total_credit_amount: totalCreditAmount,
+                totalWithdrawAmount,
                 difference: diff
             },
         });
