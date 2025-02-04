@@ -1,6 +1,7 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
+import Config from "../../../models/Config.js";
 import {
   generateOrderId,
   initiatePayout,
@@ -32,7 +33,17 @@ const withdraw = async (req, res) => {
         message: "User not found!",
       });
     }
-
+    const siteConfig = await Config.findOne({
+      where: {
+        id: 1
+      }
+    })
+    if(amount < siteConfig.minimum_withdraw){
+      return res.json({
+        status: "failed",
+        message: `Minimum withdrawal amount should be ${siteConfig.minimum_withdraw}`
+      });
+    }
     if (userRecord.balance < amount) {
       return res.json({
         status: "failed",
