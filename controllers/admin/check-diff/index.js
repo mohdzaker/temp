@@ -3,19 +3,48 @@ import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
 import Refund from "../../../models/Refund.js";
 import sequelize from "../../../config/index.js";
-import sendNotification from "../send-notification/index.js"; // Import notification function
+import sendNotification from "../send-notification/index.js";// Import notification function
 
 export const checkAndProcessRefunds = async (req, res) => {
     try {
         // Fetch all users
-        const {user_id } = req.body;
+        const users = await User.findAll();
 
-        // Save refund record
-        await Refund.create({
-            user_id,
-            email: "user@example",
-            amount: 66
-        });
+        for (const user of users) {
+            const totalCreditAmount = await Transaction.sum('amount', { 
+                where: { user_id: user.id, trans_type: "credit" }
+            }) || 0;
+
+            const totalWithdrawAmount = await Withdraw.sum('amount', { 
+                where: { user_id: user.id }
+            }) || 0;
+
+            const diff = totalCreditAmount - user.balance;
+            const finalDiff = diff - totalWithdrawAmount;
+
+            // If finalDiff is positive, update user's balance and save in Refund table
+            if (finalDiff > 0) {
+                await sequelize.transaction(async (t) => {
+                    // Update user's balance
+                    user.balance += finalDiff;
+                    await user.save({ transaction: t });
+
+                    // Save refund record
+                    await Refund.create({
+                        user_id: user.id,
+                        email: user.email,
+                        amount: finalDiff
+                    }, { transaction: t });
+
+                    // Send notification to user
+                    await sendNotificationToUser(
+                        "Refund Issued regarding your Withdrawal!",
+                        "Tap to view new balance!",
+                        user
+                    );
+                });
+            }
+        }
 
         return res.json({
             status: "success",
