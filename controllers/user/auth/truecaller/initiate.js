@@ -3,6 +3,7 @@ import User from "../../../../models/User.js";
 import jwt from "jsonwebtoken";
 import { generateReferCode } from "../google/initiate.js";
 import Referlist from "../../../../models/Referlist.js";
+import Transaction from "../../../../models/Transaction.js";
 
 const fetchToken = async (authorizationCode, codeVerifier) => {
   try {

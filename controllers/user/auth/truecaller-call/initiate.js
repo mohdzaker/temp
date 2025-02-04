@@ -3,6 +3,7 @@ import User from "../../../../models/User.js";
 import getTokenInfo from "../../../../utils/getTokenInfo.js";
 import { getPhoneNumberDetails } from "../../../../utils/trueCallerUtils.js";
 import jwt from "jsonwebtoken";
+import Transaction from "../../../../models/Transaction.js";
 
 const initiateTrueCallerCall = async (req, res) => {
   try {
