@@ -55,15 +55,21 @@ const verifyGoogle = async (req, res) => {
           message: "User not found with that mobile number!",
         });
       }
-      user.balance += user.balance + 5;
-      await user.save();
 
-      await Transaction.create({
-        user_id: user.id,
-        amount: 5,
-        description: "Signup bonus",
-        trans_type: "credit",
-      });
+      if (!user.hasReceivedBonus) {
+        user.balance += 5;
+        user.hasReceivedBonus = true;
+
+        await user.save();
+
+        await Transaction.create({
+          user_id: user.id,
+          amount: 5,
+          description: "Signup bonus",
+          trans_type: "credit",
+        });
+      }
+
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });

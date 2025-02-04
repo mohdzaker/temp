@@ -49,6 +49,10 @@ const User = sequelize.define("User", {
     type: Sequelize.DECIMAL(10, 2),
     defaultValue: 0.00,
   },
+  hasReceivedBonus: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  }
 });
 
 export default User;

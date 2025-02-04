@@ -11,7 +11,7 @@ const swaggerOptions = {
       },
       servers: [
         {
-          url: 'https://temp.earnrupi.com', // Replace with your server URL
+          url: 'https://temp.earnrupi.com/hehe', // Replace with your server URL
         },
       ],
     },
