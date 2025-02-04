@@ -105,7 +105,7 @@ const withdraw = async (req, res) => {
     return res.json({
       status: "success",
       message:
-        "Withdrawal request created successfully! " + payoutResponse.message,
+        "Withdrawal request created successfully! ",
       data: newWithdraw,
     });
   } catch (error) {
