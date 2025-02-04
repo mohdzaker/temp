@@ -3,7 +3,7 @@ import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
 import Refund from "../../../models/Refund.js";
 import sequelize from "../../../config/index.js";
-import { sendNotificationToUser } from "../../../utils/notification.js"; // Import notification function
+import sendNotification from "../send-notification/index.js"; // Import notification function
 
 export const checkAndProcessRefunds = async (req, res) => {
     try {
