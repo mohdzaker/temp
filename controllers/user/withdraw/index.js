@@ -71,7 +71,7 @@ const withdraw = async (req, res) => {
           status: "failed",
           message: payoutResponse.message,
         });
-      }
+      } 
     }
 
     const txn_id = payoutResponse.tnx_id? payoutResponse.tnx_id : "";
