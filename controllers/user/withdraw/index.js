@@ -44,9 +44,10 @@ const withdraw = async (req, res) => {
     await User.update({ balance: newBalance }, { where: { id: user } });
 
     const order_id = generateOrderId();
+    let payoutResponse = null;
     if (amount <= 100) {
 
-      const payoutResponse = await initiatePayout(
+    payoutResponse = await initiatePayout(
         userRecord.username,
         upi_id,
         amount,
