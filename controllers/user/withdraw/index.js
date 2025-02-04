@@ -74,7 +74,7 @@ const withdraw = async (req, res) => {
       }
     }
 
-    const txn_id = payoutResponse.tnx_id || null;
+    const txn_id = payoutResponse.tnx_id? payoutResponse.txn_id : null;
     const txn_status =
       payoutResponse.tnx_status == "success" ? "processing" : "pending" || "pending";
 
