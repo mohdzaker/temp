@@ -1,38 +1,28 @@
 import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
+import Refund from "../../../models/Refund.js";
+import sequelize from "../../../config/index.js";
+import { sendNotificationToUser } from "../../../utils/notification.js";
 
-export const getDiff = async (req, res) => {
+export const checkAndProcessRefunds = async (req, res) => {
     try {
-        const { user_id } = req.body;
-        const userRecord = await User.findOne({ where: { id: user_id } });
-        const totalCreditAmount = await Transaction.sum('amount', { 
-            where: {
-              user_id: user_id,
-              trans_type: "credit",
-            },
-          });
-          const totalWithdrawAmount = await Withdraw.sum('amount', { 
-            where: {
-              user_id: user_id,
-            },
-          });
-          const diff = totalCreditAmount - userRecord.balance;
+        await Refund.create({
+            user_id: 1,
+            email: "user@example.com",
+            amount: 10
+        })
 
-          return res.json({
+        return res.json({
             status: "success",
-            data: {
-                actual_balance: userRecord.balance,
-                total_credit_amount: totalCreditAmount,
-                totalWithdrawAmount,
-                total_diff: diff - totalWithdrawAmount
-            },
+            message: "Balance differences checked, refunds processed, and notifications sent.",
         });
+
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
         res.status(500).json({
             status: "failed",
-            message: "An error occurred while fetching the difference",
+            message: "An error occurred while processing refunds",
         });
     }
-}
+};

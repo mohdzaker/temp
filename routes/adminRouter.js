@@ -21,7 +21,7 @@ import { getAdmins, removeAdmin } from "../controllers/admin/admin/index.js";
 import { togglePostback } from "../controllers/admin/toggle-postback/index.js";
 import { getDatewiseClicks, getDatewiseCompleted } from "../controllers/admin/click-graph/index.js";
 import callback from "../controllers/admin/callback/index.js";
-import { getDiff } from "../controllers/admin/check-diff/index.js";
+import { checkAndProcessRefunds, getDiff } from "../controllers/admin/check-diff/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1489,6 +1489,6 @@ adminRouter.post("/callback", callback);
 
 adminRouter.get("/user-graph", authAdmin, getUsersGroupedByDate);
 
-adminRouter.post("/get-diff", getDiff);
+adminRouter.post("/get-diff", checkAndProcessRefunds);
 
 export default adminRouter;
