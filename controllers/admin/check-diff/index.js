@@ -4,10 +4,10 @@ import User from "../../../models/User.js";
 export const getDiff = async (req, res) => {
     try {
         const { user_id } = req.body;
-        const userRecord = await User.findOne({ where: { id: user } });
+        const userRecord = await User.findOne({ where: { id: user_id } });
         const totalCreditAmount = await Transaction.sum('amount', { 
             where: {
-              user_id: user,
+              user_id: user_id,
               trans_type: "credit",
             },
           });
