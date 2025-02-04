@@ -122,7 +122,7 @@ const initiateTrueCallerCall = async (req, res) => {
 
         await Transaction.create({
           user_id: user.id,
-          amount: 5,
+          amount: 7,
           description: "Signup bonus",
           trans_type: "credit",
         });
