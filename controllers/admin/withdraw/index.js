@@ -86,7 +86,7 @@ export const payToUser = async (req, res) => {
         }
 
         const checkWithdraw = await Withdraw.findOne({
-            where: { user_id, order_id, status: "approved" },
+            where: { user_id, order_id },
         });
 
         if (!checkWithdraw) {
