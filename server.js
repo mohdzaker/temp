@@ -6,6 +6,7 @@ import adminRouter from "./routes/adminRouter.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpecs from "./swagger.js";
 import cors from "cors"
+import taskRouter from "./routes/taskRouter.js";
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(cors({
 app.use(express.json());
 app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
+app.use("/task", taskRouter);
 
 app.get("/", async (req, res)=>{
   
