@@ -1,9 +1,10 @@
 import axios from 'axios';
 import express from 'express';
+import authUser from '../middlewares/authUser.js';
 
 const taskRouter = express.Router();
 
-taskRouter.post("/verification", async(req, res) => {
+taskRouter.post("/verification",authUser, async(req, res) => {
     try {
         const {click_id, platform, device_data} = req.body;
 
