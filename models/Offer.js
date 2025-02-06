@@ -23,6 +23,10 @@ const Offer = sequelize.define("Offer", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  pkg_name : {
+    type: Sequelize.STRING,
+    default: null
+  },
   status: {
     type: Sequelize.STRING,
     allowNull: false,

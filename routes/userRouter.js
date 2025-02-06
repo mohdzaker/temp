@@ -13,6 +13,7 @@ import getTransactions from "../controllers/user/transaction-history/index.js";
 import getWithdrawHistory from "../controllers/user/withdraw-history/index.js";
 import getOfferHistory from "../controllers/user/offfer-history/index.js";
 import getOffers from "../controllers/user/get-offers/index.js";
+import checkAppInstallation from "../controllers/user/check-app-installation/index.js";
 
 const userRouter = express.Router();
 /**
@@ -1214,5 +1215,7 @@ userRouter.get("/offer-history",authUser, getOfferHistory);
  */
 
 userRouter.get("/get-offers",authUser, getOffers);
+
+userRouter.post("/check-app-install", authUser, checkAppInstallation);
 
 export default userRouter;

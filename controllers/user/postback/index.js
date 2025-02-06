@@ -8,6 +8,7 @@ import Transaction from "../../../models/Transaction.js";
 import Referlist from "../../../models/Referlist.js";
 import SecretKey from "../../../models/SecureKey.js";
 import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
+import Offer from "../../../models/Offer.js";
 
 const handlePostback = async (req, res) => {
   try {
@@ -94,6 +95,18 @@ const handlePostback = async (req, res) => {
       });
     }
 
+    const offer = await Offer.findOne({
+      where: { id: checkClickHash.campaign_id },
+    });
+
+    if(offer.pkg_name != null){
+      if(!checkClickHash.is_user_app_installed){
+        return res.status(400).json({
+          status: "failed",
+          message: "User is not installed the app!",
+        });
+      }
+    }
     await EventHistory.update(
       { status: "completed" },
       {

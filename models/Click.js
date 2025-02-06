@@ -27,6 +27,10 @@ const Click = sequelize.define("Click", {
   referer: Sequelize.STRING,
   user_agent: Sequelize.STRING,
   browser_type: Sequelize.STRING,
+  is_user_app_installed: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  }
 });
 
 export default Click;
