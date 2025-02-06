@@ -21,7 +21,10 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    const admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ where:{
+      email
+    }
+     });
     if (!admin) {
       return res.status(404).json({
         status: "failed",
