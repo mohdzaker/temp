@@ -44,7 +44,7 @@ const checkAppInstallation = async (req, res) => {
             message: "User has installed the app!",
         });
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         return res.status(500).json({
             status: "error",
             message: "An error occurred while checking app installation status",
