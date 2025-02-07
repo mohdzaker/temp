@@ -23,7 +23,7 @@ const checkAppInstallation = async (req, res) => {
             });
         }
 
-        const click = await Click.findOne({ where: { user_id: id, pkg_name } });
+        const click = await Click.findOne({ where: { user_id: id, campaign_id: offer.id } });
 
         if (!click) {
             return res.status(404).json({
@@ -35,7 +35,7 @@ const checkAppInstallation = async (req, res) => {
 
         await Click.update(
             { is_user_app_installed: true }, 
-            { where: { user_id: id, pkg_name } } 
+            { where: { user_id: id, campaign_id: offer.id } } 
         );
 
         return res.status(200).json({
