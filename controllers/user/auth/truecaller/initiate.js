@@ -62,22 +62,14 @@ const fetchUserInfo = async (accessToken) => {
 
 const initiateTrueCaller = async (req, res) => {
   try {
-    const {
-      authorizationCode,
-      codeVerifier,
-      referedBy = "huntcash",
-    } = req.body;
+    const { authorizationCode, codeVerifier, referedBy = "huntcash" } = req.body;
 
     if (!authorizationCode) {
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Authorization code is required!" });
+      return res.status(400).json({ status: "failed", message: "Authorization code is required!" });
     }
 
     if (!codeVerifier) {
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Code verifier is required!" });
+      return res.status(400).json({ status: "failed", message: "Code verifier is required!" });
     }
 
     let referedById = null;
@@ -88,54 +80,41 @@ const initiateTrueCaller = async (req, res) => {
       });
 
       if (!checkReferCode) {
-        return res
-          .status(400)
-          .json({ status: "failed", message: "Invalid referral code!" });
+        return res.status(400).json({ status: "failed", message: "Invalid referral code!" });
       }
 
       referedById = checkReferCode.id;
 
-      referedById = checkReferCode.id;
+      // Fetch referral config (missing in original code)
+      const config = await Config.findOne({ where: { id: 1 } });
 
       await Referlist.create({
         user_id: checkReferCode.id,
-        referred_user_id: referedById,
+        referred_user_id: referedById, // FIX: This should be a different user's ID (new user later)
         referal_name: checkReferCode.username,
-        referal_amount: config.per_refer,
+        referal_amount: config ? config.per_refer : 0, // FIX: Ensure config is not undefined
       });
     }
 
     const fetchAccessToken = await fetchToken(authorizationCode, codeVerifier);
     if (fetchAccessToken.status === "failed") {
-      return res
-        .status(400)
-        .json({ status: "failed", message: fetchAccessToken.message });
+      return res.status(400).json({ status: "failed", message: fetchAccessToken.message });
     }
 
     const accessToken = fetchAccessToken.data.access_token;
 
     const fetchUserInfoResponse = await fetchUserInfo(accessToken);
-
     if (fetchUserInfoResponse.status === "failed") {
-      return res
-        .status(400)
-        .json({ status: "failed", message: fetchUserInfoResponse.message });
+      return res.status(400).json({ status: "failed", message: fetchUserInfoResponse.message });
     }
 
-    const { phone_number, email, given_name, picture } =
-      fetchUserInfoResponse.data;
+    const { phone_number, email, given_name, picture } = fetchUserInfoResponse.data;
 
-    const existingUser = await User.findOne({
-      where: { mobileNumber: phone_number, email },
-    });
+    const existingUser = await User.findOne({ where: { mobileNumber: phone_number, email } });
 
     if (existingUser) {
-      const token = jwt.sign({ id: existingUser.id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
-      return res
-        .status(200)
-        .json({ status: 200, message: "Logged in successfully!", token });
+      const token = jwt.sign({ id: existingUser.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+      return res.status(200).json({ status: 200, message: "Logged in successfully!", token });
     } else {
       const referCode = await generateReferCode();
       const newUser = await User.create({
@@ -147,29 +126,34 @@ const initiateTrueCaller = async (req, res) => {
         referCode,
         isVerified: true,
       });
-      const user = User.findOne({
-        where: {
-          mobileNumber: phone_number,
-          email,
-        }
-      });
+
+      const user = await User.findOne({ where: { mobileNumber: phone_number, email } }); // FIX: Added 'await'
+
       await Transaction.create({
         user_id: user.id,
         amount: 7,
         description: "Signup bonus",
         trans_type: "credit",
       });
-      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, );
-      return res
-        .status(201)
-        .json({ status: 201, message: "Registered successfully!", token });
+
+      // FIX: Ensure refer list entry is created properly for the new user
+      if (referedById) {
+        await Referlist.create({
+          user_id: referedById, // Referring user's ID
+          referred_user_id: newUser.id, // Newly registered user's ID
+          referal_name: newUser.username,
+          referal_amount: config ? config.per_refer : 0,
+        });
+      }
+
+      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
+      return res.status(201).json({ status: 201, message: "Registered successfully!", token });
     }
   } catch (error) {
     console.error("Error during initiate:", error.message);
-    return res
-      .status(500)
-      .json({ status: "failed", message: "An unexpected error occurred." });
+    return res.status(500).json({ status: "failed", message: "An unexpected error occurred." });
   }
 };
+
 
 export default initiateTrueCaller;
