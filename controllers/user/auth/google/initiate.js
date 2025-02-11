@@ -11,7 +11,7 @@ import Transaction from "../../../../models/Transaction.js";
 
 const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash } = req.body;
+    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash, imei, device_id } = req.body;
     console.log("sms hash: ", sms_hash);
 
     if (!mobileNumber || mobileNumber === "") {
@@ -45,6 +45,36 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
+    if(!imei || imei == ""){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Please enter a valid IMEI!",
+      });
+    }
+
+    if(!device_id || device_id == ""){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Please enter a valid device ID!",
+      });
+    }
+
+    const checkDevice = await User.findOne({
+      where: {
+        imei,
+        device_id
+      }
+    });
+
+    if(checkDevice){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Device already registered! Try using another device.",
+      });
+    }
     const tokenInfo = await getTokenInfo(google_token);
       //  const tokenInfo = {
       //   payload: {
@@ -145,7 +175,9 @@ const initiateGoogle = async (req, res) => {
         profilePic: tokenInfo.payload.picture,
         referedBy: referedById || 0,
         referCode,
-        isPromoUser: true
+        isPromoUser: true,
+        imei,
+        device_id,
       });
       const user = await User.findOne({
         where: {

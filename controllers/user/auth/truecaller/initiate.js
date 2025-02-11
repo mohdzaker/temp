@@ -62,7 +62,7 @@ const fetchUserInfo = async (accessToken) => {
 
 const initiateTrueCaller = async (req, res) => {
   try {
-    const { authorizationCode, codeVerifier, referedBy = "huntcash" } = req.body;
+    const { authorizationCode, codeVerifier, referedBy = "huntcash", imei, device_id } = req.body;
 
     if (!authorizationCode) {
       return res.status(400).json({ status: "failed", message: "Authorization code is required!" });
@@ -72,6 +72,36 @@ const initiateTrueCaller = async (req, res) => {
       return res.status(400).json({ status: "failed", message: "Code verifier is required!" });
     }
 
+    if(!imei || imei == ""){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Please enter a valid IMEI!",
+      });
+    }
+
+    if(!device_id || device_id == ""){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Please enter a valid device ID!",
+      });
+    }
+
+    const checkDevice = await User.findOne({
+      where: {
+        imei,
+        device_id
+      }
+    });
+
+    if(checkDevice){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Device already registered! Try using another device.",
+      });
+    }
     let referedById = null;
 
     if (referedBy && referedBy !== "huntcash") {
@@ -126,6 +156,8 @@ const initiateTrueCaller = async (req, res) => {
         referCode,
         isVerified: true,
         isPromoUser: true,
+        imei,
+        device_id,
       });
 
       const user = await User.findOne({ where: { mobileNumber: phone_number, email } }); // FIX: Added 'await'

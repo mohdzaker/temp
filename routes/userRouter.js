@@ -15,6 +15,7 @@ import getOfferHistory from "../controllers/user/offfer-history/index.js";
 import getOffers from "../controllers/user/get-offers/index.js";
 import checkAppInstallation from "../controllers/user/check-app-installation/index.js";
 import claimPromoCode from "../controllers/user/claim-promo-code/index.js";
+import checkDevice from "../controllers/user/check-device/index.js";
 
 const userRouter = express.Router();
 /**
@@ -1220,5 +1221,7 @@ userRouter.get("/get-offers",authUser, getOffers);
 userRouter.post("/check-app-install", authUser, checkAppInstallation);
 
 userRouter.post("/claim-promo-code",authUser, claimPromoCode);
+
+userRouter.post("/check-device",authUser, checkDevice);
 
 export default userRouter;

@@ -7,7 +7,7 @@ import Transaction from "../../../../models/Transaction.js";
 
 const initiateTrueCallerCall = async (req, res) => {
   try {
-    const { accessToken, google_token, referedBy = "huntcash" } = req.body;
+    const { accessToken, google_token, referedBy = "huntcash", imei, device_id } = req.body;
 
     if (!accessToken || accessToken === "") {
       return res.status(400).json({
@@ -25,6 +25,36 @@ const initiateTrueCallerCall = async (req, res) => {
       });
     }
 
+    if(!imei || imei == ""){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Please enter a valid IMEI!",
+      });
+    }
+
+    if(!device_id || device_id == ""){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Please enter a valid device ID!",
+      });
+    }
+
+    const checkDevice = await User.findOne({
+      where: {
+        imei,
+        device_id
+      }
+    });
+
+    if(checkDevice){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Device already registered! Try using another device.",
+      });
+    }
     const phoneDetails = await getPhoneNumberDetails(accessToken);
 
     if (phoneDetails.status === "failed") {
@@ -109,7 +139,9 @@ const initiateTrueCallerCall = async (req, res) => {
         referedBy: referedById || 0,
         referCode,
         isVerified: true,
-        isPromoUser: true
+        isPromoUser: true,
+        imei,
+        device_id,
       });
       const user = User.findOne({
         where: {

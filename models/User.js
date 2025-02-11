@@ -56,6 +56,14 @@ const User = sequelize.define("User", {
   isPromoUser: {
     type: Sequelize.BOOLEAN,
     allowNull: false
+  },
+  imei: {
+    type: Sequelize.STRING,
+    unique: true,
+  },
+  device_id: {
+    type: Sequelize.STRING,
+    unique: true,
   }
 });
 
