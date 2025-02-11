@@ -62,7 +62,7 @@ const fetchUserInfo = async (accessToken) => {
 
 const initiateTrueCaller = async (req, res) => {
   try {
-    const { authorizationCode, codeVerifier, referedBy = "huntcash", device_id } = req.body;
+    const { authorizationCode, codeVerifier, referedBy = "huntcash", device_id = null } = req.body;
 
     if (!authorizationCode) {
       return res.status(400).json({ status: "failed", message: "Authorization code is required!" });
@@ -72,19 +72,19 @@ const initiateTrueCaller = async (req, res) => {
       return res.status(400).json({ status: "failed", message: "Code verifier is required!" });
     }
 
-    const checkDevice = await User.findOne({
-      where: {
-        device_id
-      }
-    });
+    // const checkDevice = await User.findOne({
+    //   where: {
+    //     device_id
+    //   }
+    // });
 
-    if(checkDevice){
-      return res.status(400).json({
-        status: "failed",
-        success: false,
-        message: "Device already registered! Try using another device.",
-      });
-    }
+    // if(checkDevice){
+    //   return res.status(400).json({
+    //     status: "failed",
+    //     success: false,
+    //     message: "Device already registered! Try using another device.",
+    //   });
+    // }
     let referedById = null;
 
     if (referedBy && referedBy !== "huntcash") {

@@ -11,7 +11,7 @@ import Transaction from "../../../../models/Transaction.js";
 
 const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash, device_id } = req.body;
+    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash, device_id = null } = req.body;
     console.log("sms hash: ", sms_hash);
 
     if (!mobileNumber || mobileNumber === "") {
@@ -45,19 +45,19 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    const checkDevice = await User.findOne({
-      where: {
-        device_id
-      }
-    });
+    // const checkDevice = await User.findOne({
+    //   where: {
+    //     device_id
+    //   }
+    // });
 
-    if(checkDevice){
-      return res.status(400).json({
-        status: "failed",
-        success: false,
-        message: "Device already registered! Try using another device.",
-      });
-    }
+    // if(checkDevice){
+    //   return res.status(400).json({
+    //     status: "failed",
+    //     success: false,
+    //     message: "Device already registered! Try using another device.",
+    //   });
+    // }
     const tokenInfo = await getTokenInfo(google_token);
       //  const tokenInfo = {
       //   payload: {

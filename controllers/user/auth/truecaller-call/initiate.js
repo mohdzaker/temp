@@ -7,7 +7,7 @@ import Transaction from "../../../../models/Transaction.js";
 
 const initiateTrueCallerCall = async (req, res) => {
   try {
-    const { accessToken, google_token, referedBy = "huntcash", device_id } = req.body;
+    const { accessToken, google_token, referedBy = "huntcash", device_id = null } = req.body;
 
     if (!accessToken || accessToken === "") {
       return res.status(400).json({
@@ -25,19 +25,19 @@ const initiateTrueCallerCall = async (req, res) => {
       });
     }
 
-    const checkDevice = await User.findOne({
-      where: {
-        device_id
-      }
-    });
+    // const checkDevice = await User.findOne({
+    //   where: {
+    //     device_id
+    //   }
+    // });
 
-    if(checkDevice){
-      return res.status(400).json({
-        status: "failed",
-        success: false,
-        message: "Device already registered! Try using another device.",
-      });
-    }
+    // if(checkDevice){
+    //   return res.status(400).json({
+    //     status: "failed",
+    //     success: false,
+    //     message: "Device already registered! Try using another device.",
+    //   });
+    // }
     const phoneDetails = await getPhoneNumberDetails(accessToken);
 
     if (phoneDetails.status === "failed") {
