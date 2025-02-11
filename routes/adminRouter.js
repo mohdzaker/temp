@@ -1373,7 +1373,7 @@ adminRouter.get("/dashboard", authAdmin, getDashboardData);
  *         description: Internal Server Error
  */
 
-adminRouter.get("/refer-history", authAdmin, getReferHistory);
+adminRouter.post("/refer-history", authAdmin, getReferHistory);
 /**
  * @swagger
  * /api/admin/transaction-history:
@@ -1458,7 +1458,7 @@ adminRouter.get("/refer-history", authAdmin, getReferHistory);
  *         description: Internal Server Error
  */
 
-adminRouter.get("/transaction-history", authAdmin, getTransactions);
+adminRouter.post("/transaction-history", authAdmin, getTransactions);
 
 adminRouter.get("/offer-history", authAdmin, getOfferHistory);
 
