@@ -38,12 +38,14 @@ const withdraw = async (req, res) => {
         id: 1
       }
     })
-    if(amount < siteConfig.minimum_withdraw){
-      return res.json({
-        status: "failed",
-        message: `Minimum withdrawal amount should be ${siteConfig.minimum_withdraw}`
-      });
-    }
+    if (!userRecord.isPromoUser) {
+      if (amount < siteConfig.minimum_withdraw) {
+        return res.json({
+          status: "failed",
+          message: `Minimum withdrawal amount should be ${siteConfig.minimum_withdraw}`,
+        });
+      }
+    }    
     if (userRecord.balance < amount) {
       return res.json({
         status: "failed",

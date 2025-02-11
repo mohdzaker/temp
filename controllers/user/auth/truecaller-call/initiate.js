@@ -109,6 +109,7 @@ const initiateTrueCallerCall = async (req, res) => {
         referedBy: referedById || 0,
         referCode,
         isVerified: true,
+        isPromoUser: true
       });
       const user = User.findOne({
         where: {
@@ -117,7 +118,7 @@ const initiateTrueCallerCall = async (req, res) => {
       });
       await Transaction.create({
         user_id: user.id,
-        amount: 7,
+        amount: 1,
         description: "Signup bonus",
         trans_type: "credit",
       });

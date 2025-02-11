@@ -47,11 +47,15 @@ const User = sequelize.define("User", {
   },
   balance: {
     type: Sequelize.DECIMAL(10, 2),
-    defaultValue: 7,
+    defaultValue: 1,
   },
   hasReceivedBonus: {
     type: Sequelize.BOOLEAN,
     defaultValue: true,
+  },
+  isPromoUser: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false
   }
 });
 

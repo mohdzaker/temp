@@ -1,0 +1,1 @@
+export const NEW_USER_SIGNUP_BONUS = 1;

@@ -125,13 +125,14 @@ const initiateTrueCaller = async (req, res) => {
         referedBy: referedById || 0, // Default to "huntcash" if no valid referedBy
         referCode,
         isVerified: true,
+        isPromoUser: true,
       });
 
       const user = await User.findOne({ where: { mobileNumber: phone_number, email } }); // FIX: Added 'await'
 
       await Transaction.create({
         user_id: user.id,
-        amount: 7,
+        amount: 1,
         description: "Signup bonus",
         trans_type: "credit",
       });

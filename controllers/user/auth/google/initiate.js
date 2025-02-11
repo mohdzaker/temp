@@ -145,6 +145,7 @@ const initiateGoogle = async (req, res) => {
         profilePic: tokenInfo.payload.picture,
         referedBy: referedById || 0,
         referCode,
+        isPromoUser: true
       });
       const user = await User.findOne({
         where: {
@@ -153,7 +154,7 @@ const initiateGoogle = async (req, res) => {
       })
       await Transaction.create({
         user_id: user.id,
-        amount: 7,
+        amount: 1,
         description: "Signup bonus",
         trans_type: "credit",
       });
