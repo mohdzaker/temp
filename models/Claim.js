@@ -1,4 +1,4 @@
-import PromoCode from "../../../models/PromoCode.js";
+import PromoCode from "./PromoCode.js";
 import { Sequelize } from "sequelize";
 import sequelize from "../config/index.js";
 
