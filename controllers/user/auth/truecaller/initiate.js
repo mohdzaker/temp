@@ -72,22 +72,6 @@ const initiateTrueCaller = async (req, res) => {
       return res.status(400).json({ status: "failed", message: "Code verifier is required!" });
     }
 
-    if(!imei || imei == ""){
-      return res.status(400).json({
-        status: "failed",
-        success: false,
-        message: "Please enter a valid IMEI!",
-      });
-    }
-
-    if(!device_id || device_id == ""){
-      return res.status(400).json({
-        status: "failed",
-        success: false,
-        message: "Please enter a valid device ID!",
-      });
-    }
-
     const checkDevice = await User.findOne({
       where: {
         imei,
