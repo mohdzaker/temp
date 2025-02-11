@@ -57,10 +57,6 @@ const User = sequelize.define("User", {
     type: Sequelize.BOOLEAN,
     allowNull: false
   },
-  imei: {
-    type: Sequelize.STRING,
-    unique: true,
-  },
   device_id: {
     type: Sequelize.STRING,
     unique: true,

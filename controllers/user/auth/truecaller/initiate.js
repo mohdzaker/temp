@@ -62,7 +62,7 @@ const fetchUserInfo = async (accessToken) => {
 
 const initiateTrueCaller = async (req, res) => {
   try {
-    const { authorizationCode, codeVerifier, referedBy = "huntcash", imei, device_id } = req.body;
+    const { authorizationCode, codeVerifier, referedBy = "huntcash", device_id } = req.body;
 
     if (!authorizationCode) {
       return res.status(400).json({ status: "failed", message: "Authorization code is required!" });
@@ -74,7 +74,6 @@ const initiateTrueCaller = async (req, res) => {
 
     const checkDevice = await User.findOne({
       where: {
-        imei,
         device_id
       }
     });
@@ -140,7 +139,6 @@ const initiateTrueCaller = async (req, res) => {
         referCode,
         isVerified: true,
         isPromoUser: true,
-        imei,
         device_id,
       });
 

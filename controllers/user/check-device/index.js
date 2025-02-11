@@ -3,12 +3,12 @@ import User from "../../../models/User.js";
 const checkDevice = async (req, res) => {
     try {
         const user_id = req.user.id;
-        const { imei, device_id } = req.body;
+        const { device_id } = req.body;
 
-        if (!imei || !device_id) {
+        if (!device_id) {
             return res.status(400).json({
                 status: "failed",
-                message: "IMEI and device ID are required",
+                message: "Device ID is required",
             });
         }
 
@@ -21,9 +21,9 @@ const checkDevice = async (req, res) => {
             });
         }
 
-        if (!user.imei || !user.device_id) {
+        if (!user.device_id) {
             await User.update(
-                { imei: user.imei || imei, device_id: user.device_id || device_id },
+                { device_id: user.device_id || device_id },
                 { where: { id: user_id } }
             );
 
@@ -34,8 +34,8 @@ const checkDevice = async (req, res) => {
         }
 
         return res.status(400).json({
-            status: "failed",
-            message: "IMEI and device ID are already set",
+            status: "success",
+            message: "Device ID is already set",
         });
 
     } catch (error) {

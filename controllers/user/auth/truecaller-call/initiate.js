@@ -7,7 +7,7 @@ import Transaction from "../../../../models/Transaction.js";
 
 const initiateTrueCallerCall = async (req, res) => {
   try {
-    const { accessToken, google_token, referedBy = "huntcash", imei, device_id } = req.body;
+    const { accessToken, google_token, referedBy = "huntcash", device_id } = req.body;
 
     if (!accessToken || accessToken === "") {
       return res.status(400).json({
@@ -27,7 +27,6 @@ const initiateTrueCallerCall = async (req, res) => {
 
     const checkDevice = await User.findOne({
       where: {
-        imei,
         device_id
       }
     });
@@ -124,7 +123,6 @@ const initiateTrueCallerCall = async (req, res) => {
         referCode,
         isVerified: true,
         isPromoUser: true,
-        imei,
         device_id,
       });
       const user = User.findOne({

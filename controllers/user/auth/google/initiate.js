@@ -11,7 +11,7 @@ import Transaction from "../../../../models/Transaction.js";
 
 const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash, imei, device_id } = req.body;
+    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash, device_id } = req.body;
     console.log("sms hash: ", sms_hash);
 
     if (!mobileNumber || mobileNumber === "") {
@@ -44,10 +44,9 @@ const initiateGoogle = async (req, res) => {
         message: "SMS hash is required and cannot be empty!",
       });
     }
-    
+
     const checkDevice = await User.findOne({
       where: {
-        imei,
         device_id
       }
     });
@@ -160,7 +159,6 @@ const initiateGoogle = async (req, res) => {
         referedBy: referedById || 0,
         referCode,
         isPromoUser: true,
-        imei,
         device_id,
       });
       const user = await User.findOne({
