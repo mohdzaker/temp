@@ -22,6 +22,7 @@ import { togglePostback } from "../controllers/admin/toggle-postback/index.js";
 import { getDatewiseClicks, getDatewiseCompleted } from "../controllers/admin/click-graph/index.js";
 import callback from "../controllers/admin/callback/index.js";
 import { checkAndProcessRefunds } from "../controllers/admin/check-diff/index.js";
+import { createPromoCode, deletePromoCode, getAllPromoCodes, getPromoCodeById, updatePromoCode } from "../controllers/admin/create-promo-code/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1489,4 +1490,14 @@ adminRouter.post("/callback", callback);
 
 adminRouter.get("/user-graph", authAdmin, getUsersGroupedByDate);
 adminRouter.post("/get-diff", checkAndProcessRefunds);
+
+adminRouter.post("/create-promo-code", authAdmin, createPromoCode);
+
+adminRouter.get("/get-promo-codes", authAdmin, getAllPromoCodes);
+
+adminRouter.get("get-promo-code-by-id", authAdmin, getPromoCodeById);
+
+adminRouter.get("/update-promo-code", authAdmin, updatePromoCode);
+
+adminRouter.get("/delete-promo-code", authAdmin, deletePromoCode);
 export default adminRouter;
