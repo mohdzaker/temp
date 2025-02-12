@@ -60,7 +60,7 @@ const handlePostback = async (req, res) => {
 
     const checkEventExists = await Event.findOne({
       where: {
-        campaign_id: checkClickHash.campaign_id,
+        id: event
       },
     });
 
