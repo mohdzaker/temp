@@ -113,7 +113,7 @@ const handlePostback = async (req, res) => {
         where: {
           clickHash: click_id,
           campaign_id: checkClickHash.campaign_id,
-          event_id: checkEventExists.id,
+          event_id: event,
         },
       }
     );
