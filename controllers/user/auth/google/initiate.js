@@ -77,17 +77,18 @@ const initiateGoogle = async (req, res) => {
       }
     });
 
-    if(checkDevice && checkDevice.email != tokenInfo.email){
+    
+    const checkEmailExists = await User.findOne({
+      where: { email: tokenInfo.payload.email },
+    });
+
+    if(checkDevice && checkDevice.id != checkEmailExists.id){
       return res.status(400).json({
         status: "failed",
         success: false,
         message: "Device already registered! Try using another device.",
       });
     }
-
-    const checkEmailExists = await User.findOne({
-      where: { email: tokenInfo.payload.email },
-    });
 
     let referedById = null;
 
