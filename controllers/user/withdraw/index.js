@@ -55,7 +55,15 @@ const withdraw = async (req, res) => {
       },
     });
 
-    if (amount > totalCreditAmount) {
+    const totalDebitditAmount = await Transaction.sum("amount", {
+      where: {
+        user_id: user,
+        trans_type: "debit",
+      },
+    });
+
+    const totalamo = amount + totalDebitditAmount;
+    if (totalamo > totalCreditAmount) {
       return res.json({
         status: "failed",
         message: "You have exceeded your credited amount.",
