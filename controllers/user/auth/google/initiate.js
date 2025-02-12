@@ -45,19 +45,6 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    // const checkDevice = await User.findOne({
-    //   where: {
-    //     device_id
-    //   }
-    // });
-
-    // if(checkDevice){
-    //   return res.status(400).json({
-    //     status: "failed",
-    //     success: false,
-    //     message: "Device already registered! Try using another device.",
-    //   });
-    // }
     const tokenInfo = await getTokenInfo(google_token);
       //  const tokenInfo = {
       //   payload: {
@@ -80,6 +67,21 @@ const initiateGoogle = async (req, res) => {
         status: "failed",
         success: false,
         message: tokenInfo.message,
+      });
+    }
+
+    
+    const checkDevice = await User.findOne({
+      where: {
+        device_id
+      }
+    });
+
+    if(checkDevice && checkDevice.email != tokenInfo.email){
+      return res.status(400).json({
+        status: "failed",
+        success: false,
+        message: "Device already registered! Try using another device.",
       });
     }
 
