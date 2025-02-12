@@ -5,13 +5,19 @@ import { generateOTP, getExpirationDate } from "../../../../utils/index.js";
 import rateLimit from "../../../../utils/rateLimit.js";
 import sendOTP from "../../../../utils/sendOtp.js";
 import jwt from "jsonwebtoken";
-import Referlist from "../../../../models/Referlist.js";  // Import Referlist model
+import Referlist from "../../../../models/Referlist.js"; // Import Referlist model
 import Config from "../../../../models/Config.js";
 import Transaction from "../../../../models/Transaction.js";
 
 const initiateGoogle = async (req, res) => {
   try {
-    const { mobileNumber, google_token, referedBy= "huntcash", sms_hash, device_id = null } = req.body;
+    const {
+      mobileNumber,
+      google_token,
+      referedBy = "huntcash",
+      sms_hash,
+      device_id = null,
+    } = req.body;
     console.log("sms hash: ", sms_hash);
 
     if (!mobileNumber || mobileNumber === "") {
@@ -46,22 +52,22 @@ const initiateGoogle = async (req, res) => {
     }
 
     const tokenInfo = await getTokenInfo(google_token);
-      //  const tokenInfo = {
-      //   payload: {
-      //     iss: 'https://accounts.google.com',
-      //     azp: '978014925661-mnl4nvrta816q5lu5b28f24s1ntvhibe.apps.googleusercontent.com',
-      //     aud: '978014925661-hklnq6kjm59v1gjjh7oja74ef087nfck.apps.googleusercontent.com',
-      //     sub: '112671659393143187213',
-      //     email: 'indiangujrati90@gmail.com',
-      //     email_verified: true,
-      //     name: 'Oneshot IND',
-      //     picture: 'https://lh3.googleusercontent.com/a/ACg8ocJl4eSOWGkq8NmbcDAp7w6Ojl-jusiC3mk_YUyBQxXfZyrGNJgF=s96-c',
-      //     given_name: 'Oneshot',
-      //     family_name: 'IND',
-      //     iat: 1737005650,
-      //     exp: 1737009250
-      //   }
-      //  }
+    //  const tokenInfo = {
+    //   payload: {
+    //     iss: 'https://accounts.google.com',
+    //     azp: '978014925661-mnl4nvrta816q5lu5b28f24s1ntvhibe.apps.googleusercontent.com',
+    //     aud: '978014925661-hklnq6kjm59v1gjjh7oja74ef087nfck.apps.googleusercontent.com',
+    //     sub: '112671659393143187213',
+    //     email: 'indiangujrati90@gmail.com',
+    //     email_verified: true,
+    //     name: 'Oneshot IND',
+    //     picture: 'https://lh3.googleusercontent.com/a/ACg8ocJl4eSOWGkq8NmbcDAp7w6Ojl-jusiC3mk_YUyBQxXfZyrGNJgF=s96-c',
+    //     given_name: 'Oneshot',
+    //     family_name: 'IND',
+    //     iat: 1737005650,
+    //     exp: 1737009250
+    //   }
+    //  }
     if (tokenInfo?.status === "failed") {
       return res.status(401).json({
         status: "failed",
@@ -70,19 +76,21 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    
+    // Check if a user already exists with the given device_id
     const checkDevice = await User.findOne({
-      where: {
-        device_id
-      }
+      where: { device_id },
     });
 
-    
+    // Check if the email is already registered
     const checkEmailExists = await User.findOne({
       where: { email: tokenInfo.payload.email },
     });
 
-    if(checkEmailExists && checkDevice.id != checkEmailExists.id){
+    // If the device is already linked to a different user
+    if (
+      checkDevice &&
+      (!checkEmailExists || checkDevice.id !== checkEmailExists.id)
+    ) {
       return res.status(400).json({
         status: "failed",
         success: false,
@@ -116,16 +124,16 @@ const initiateGoogle = async (req, res) => {
 
       const config = await Config.findOne({
         where: {
-          id: 1
-        }
+          id: 1,
+        },
       });
 
       referedById = checkReferCode.id;
 
       await Referlist.create({
-        user_id: checkReferCode.id, 
+        user_id: checkReferCode.id,
         referred_user_id: referedById,
-        referal_name: checkReferCode.username, 
+        referal_name: checkReferCode.username,
         referal_amount: config.per_refer,
       });
     }
@@ -143,7 +151,7 @@ const initiateGoogle = async (req, res) => {
       } else {
         const token = jwt.sign(
           { id: checkEmailExists.id },
-          process.env.JWT_SECRET,
+          process.env.JWT_SECRET
         );
 
         return res.status(200).json({
@@ -166,9 +174,9 @@ const initiateGoogle = async (req, res) => {
       });
       const user = await User.findOne({
         where: {
-          mobileNumber
-        }
-      })
+          mobileNumber,
+        },
+      });
       await Transaction.create({
         user_id: user.id,
         amount: 1,
@@ -200,7 +208,7 @@ export default initiateGoogle;
 
 const sendVerifyCode = async (mobileNumber, google_token, res, sms_hash) => {
   try {
-    console.log("here",sms_hash)
+    console.log("here", sms_hash);
     const otpCode = generateOTP();
     const expiresAt = getExpirationDate();
 
