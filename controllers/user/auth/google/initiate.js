@@ -76,17 +76,14 @@ const initiateGoogle = async (req, res) => {
       });
     }
 
-    // Check if a user already exists with the given device_id
     const checkDevice = await User.findOne({
       where: { device_id },
     });
 
-    // Check if the email is already registered
     const checkEmailExists = await User.findOne({
       where: { email: tokenInfo.payload.email },
     });
 
-    // If the device is already linked to a different user
     if (
       checkDevice &&
       (!checkEmailExists || checkDevice.id !== checkEmailExists.id)
