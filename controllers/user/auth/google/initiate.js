@@ -82,7 +82,7 @@ const initiateGoogle = async (req, res) => {
       where: { email: tokenInfo.payload.email },
     });
 
-    if(checkDevice && checkDevice.id != checkEmailExists.id){
+    if(checkEmailExists && checkDevice.id != checkEmailExists.id){
       return res.status(400).json({
         status: "failed",
         success: false,
