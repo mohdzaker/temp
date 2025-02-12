@@ -64,6 +64,8 @@ const handlePostback = async (req, res) => {
       },
     });
 
+    console.log("dhek bhopadike", checkEventExists)
+
     if (!checkEventExists) {
       return res.status(404).json({
         status: "failed",
