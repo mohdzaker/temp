@@ -131,7 +131,7 @@ const initiateGoogle = async (req, res) => {
         user_id: checkReferCode.id,
         referred_user_id: referedById,
         referal_name: checkReferCode.username,
-        referal_amount: config.per_refer,
+        referal_amount: parseInt(config.per_refer),
       });
     }
 
