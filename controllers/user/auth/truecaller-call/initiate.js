@@ -122,7 +122,7 @@ const initiateTrueCallerCall = async (req, res) => {
         referedBy: referedById || 0,
         referCode,
         isVerified: true,
-        isPromoUser: false,
+        isPromoUser: true,
         device_id,
       });
       const user = User.findOne({

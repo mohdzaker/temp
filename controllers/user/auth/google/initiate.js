@@ -166,7 +166,7 @@ const initiateGoogle = async (req, res) => {
         profilePic: tokenInfo.payload.picture,
         referedBy: referedById || 0,
         referCode,
-        isPromoUser: false,
+        isPromoUser: true,
         device_id,
       });
       const user = await User.findOne({

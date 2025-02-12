@@ -138,7 +138,7 @@ const initiateTrueCaller = async (req, res) => {
         referedBy: referedById || 0, // Default to "huntcash" if no valid referedBy
         referCode,
         isVerified: true,
-        isPromoUser: false,
+        isPromoUser: true,
         device_id,
       });
 
