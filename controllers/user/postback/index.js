@@ -131,11 +131,11 @@ const handlePostback = async (req, res) => {
       });
     }
 
-    user.balance += checkEventExists.event_amount;
+    user.balance += checkEventExists.dataValues.event_amount;
     await user.save();
     await Transaction.create({
       user_id: checkClickHash.user_id,
-      amount: checkEventExists.event_amount,
+      amount: checkEventExists.dataValues.event_amount,
       description: "Event Completion",
       trans_type: "credit",
     });
