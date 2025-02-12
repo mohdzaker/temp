@@ -48,27 +48,27 @@ const withdraw = async (req, res) => {
       });
     }
 
-    const totalCreditAmount = await Transaction.sum("amount", {
-      where: {
-        user_id: user,
-        trans_type: "credit",
-      },
-    });
+    // const totalCreditAmount = await Transaction.sum("amount", {
+    //   where: {
+    //     user_id: user,
+    //     trans_type: "credit",
+    //   },
+    // });
 
-    const totalDebitditAmount = await Transaction.sum("amount", {
-      where: {
-        user_id: user,
-        trans_type: "debit",
-      },
-    });
+    // const totalDebitditAmount = await Transaction.sum("amount", {
+    //   where: {
+    //     user_id: user,
+    //     trans_type: "debit",
+    //   },
+    // });
 
-    const totalamo = amount + totalDebitditAmount;
-    if (totalamo > totalCreditAmount) {
-      return res.json({
-        status: "failed",
-        message: "You have exceeded your credited amount.",
-      });
-    }
+    // const totalamo = amount + totalDebitditAmount;
+    // if (totalamo > totalCreditAmount) {
+    //   return res.json({
+    //     status: "failed",
+    //     message: "You have exceeded your credited amount.",
+    //   });
+    // }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0); 
