@@ -151,7 +151,7 @@ const handlePostback = async (req, res) => {
     };
     const refer_percentage = config.per_refer;
     const referrer_amount = getPercentage(
-      checkEventExists.event_amount,
+      checkEventExists.dataValues.event_amount,
       refer_percentage
     );
     const referrer = user.referedBy;
