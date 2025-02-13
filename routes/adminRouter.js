@@ -1502,5 +1502,5 @@ adminRouter.get("/update-promo-code", authAdmin, updatePromoCode);
 
 adminRouter.get("/delete-promo-code", authAdmin, deletePromoCode);
 
-adminRouter.get("export-events", exportEvent)
+adminRouter.get("/export-events", exportEvent)
 export default adminRouter;
