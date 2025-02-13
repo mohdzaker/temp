@@ -1,6 +1,6 @@
 import fs from "fs";
 import { format } from "date-fns";
-import { Parser } from "fast-csv";
+import fastCsv from "fast-csv"; // ✅ Correct Import
 import { Op } from "sequelize";
 import EventHistory from "../../../models/EventHistory.js";
 import Event from "../../../models/Event.js";
@@ -13,14 +13,14 @@ const exportEvent = async (req, res) => {
         status: "completed",
         createdAt: { [Op.gte]: new Date("2025-02-06") },
       },
-      raw: true, // Returns plain objects
+      raw: true,
     });
 
     // Fetch corresponding events and filter where event_amount > 0
     const results = await Promise.all(
       histories.map(async (history) => {
         const event = await Event.findOne({
-          where: { id: history.event_id, event_amount: { [Op.gt]: 0 } }, // Filter event_amount > 0
+          where: { id: history.event_id, event_amount: { [Op.gt]: 0 } },
           raw: true,
         });
 
@@ -35,7 +35,7 @@ const exportEvent = async (req, res) => {
       })
     );
 
-    // Remove undefined values (in case an event doesn't meet the condition)
+    // Remove undefined values (if an event doesn't meet the condition)
     const filteredResults = results.filter(Boolean);
 
     // If no valid results, return a message
@@ -44,8 +44,8 @@ const exportEvent = async (req, res) => {
     }
 
     // Generate CSV file
-    const csvStream = new Parser({ headers: true });
     const writableStream = fs.createWriteStream("event_data.csv");
+    const csvStream = fastCsv.format({ headers: true }); // ✅ Correct Usage
 
     csvStream.pipe(writableStream);
     filteredResults.forEach((row) => csvStream.write(row));
@@ -60,4 +60,5 @@ const exportEvent = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export default exportEvent;
