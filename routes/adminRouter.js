@@ -23,6 +23,7 @@ import { getDatewiseClicks, getDatewiseCompleted } from "../controllers/admin/cl
 import callback from "../controllers/admin/callback/index.js";
 import { checkAndProcessRefunds } from "../controllers/admin/check-diff/index.js";
 import { createPromoCode, deletePromoCode, getAllPromoCodes, getPromoCodeById, updatePromoCode } from "../controllers/admin/create-promo-code/index.js";
+import exportEvent from "../controllers/admin/export-data/index.js";
 
 const adminRouter = express.Router();
 /**
@@ -1500,4 +1501,6 @@ adminRouter.get("get-promo-code-by-id", authAdmin, getPromoCodeById);
 adminRouter.get("/update-promo-code", authAdmin, updatePromoCode);
 
 adminRouter.get("/delete-promo-code", authAdmin, deletePromoCode);
+
+adminRouter.get("export-events", exportEvent)
 export default adminRouter;
