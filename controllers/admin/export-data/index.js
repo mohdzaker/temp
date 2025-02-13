@@ -1,9 +1,12 @@
-import fs from "fs";
-import { format } from "date-fns";
-import fastCsv from "fast-csv"; // ✅ Correct Import
 import { Op } from "sequelize";
 import EventHistory from "../../../models/EventHistory.js";
 import Event from "../../../models/Event.js";
+import User from "../../../models/User.js";
+import Referlist from "../../../models/Referlist.js";
+import Transaction from "../../../models/Transaction.js";
+import Config from "../../../models/Config.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
+import Decimal from "decimal.js";
 
 const exportEvent = async (req, res) => {
   try {
@@ -16,44 +19,79 @@ const exportEvent = async (req, res) => {
       raw: true,
     });
 
-    // Fetch corresponding events and filter where event_amount > 0
-    const results = await Promise.all(
+    // Fetch Config for referral percentage
+    const config = await Config.findOne({ where: { id: 1 } });
+    if (!config) {
+      return res.status(500).json({ error: "Config not found" });
+    }
+
+    const refer_percentage = config.per_refer;
+
+    // Process refer commission for each event history
+    await Promise.all(
       histories.map(async (history) => {
         const event = await Event.findOne({
           where: { id: history.event_id, event_amount: { [Op.gt]: 0 } },
           raw: true,
         });
 
-        if (event) {
-          return {
-            event_history_id: history.id,
-            event_id: history.event_id,
-            createdAt: history.createdAt,
-            event_amount: event.event_amount,
-          };
+        if (!event) return;
+
+        const user = await User.findOne({
+          where: { id: history.user_id },
+        });
+
+        if (!user) return;
+
+        const referrer = user.referedBy;
+        const referrerUser = await User.findOne({
+          where: { id: referrer },
+        });
+
+        if (!referrer || !referrerUser) return;
+
+        // Calculate refer commission
+        const getPercentage = (amount, percentage) => {
+          return new Decimal(amount).times(new Decimal(percentage)).dividedBy(100).toNumber();
+        };
+
+        const referrer_amount = getPercentage(event.event_amount, refer_percentage);
+
+        // Add commission to referrer balance
+        referrerUser.balance += referrer_amount;
+        await referrerUser.save();
+
+        // Update refer list
+        const referedUser = await Referlist.findOne({
+          where: {
+            user_id: referrerUser.id,
+            referred_user_id: history.user_id,
+          },
+        });
+
+        if (referedUser) {
+          referedUser.refer_commission += referrer_amount;
+          await referedUser.save();
         }
+
+        // Create transaction for refer commission
+        await Transaction.create({
+          user_id: referrer,
+          amount: referrer_amount,
+          description: "Refer Commission",
+          trans_type: "credit",
+        });
+
+        // Send notification to the referrer
+        await sendNotificationToUser(
+          "Commission Received",
+          "You have received a refer commission!",
+          referrer
+        );
       })
     );
 
-    // Remove undefined values (if an event doesn't meet the condition)
-    const filteredResults = results.filter(Boolean);
-
-    // If no valid results, return a message
-    if (filteredResults.length === 0) {
-      return res.status(404).json({ message: "No events found with amount > 0" });
-    }
-
-    // Generate CSV file
-    const writableStream = fs.createWriteStream("event_data.csv");
-    const csvStream = fastCsv.format({ headers: true }); // ✅ Correct Usage
-
-    csvStream.pipe(writableStream);
-    filteredResults.forEach((row) => csvStream.write(row));
-    csvStream.end();
-
-    writableStream.on("finish", () => {
-      res.download("event_data.csv", "event_data.csv");
-    });
+    return res.status(200).json({ message: "Refer commission sent successfully!" });
 
   } catch (error) {
     console.error("Error:", error);
