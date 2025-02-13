@@ -28,7 +28,7 @@ const exportEvent = async (req, res) => {
           return {
             event_history_id: history.id,
             event_id: history.event_id,
-            createdAt: format(history.createdAt, "yyyy-MM-dd HH:mm:ss"),
+            createdAt: history.createdAt,
             event_amount: event.event_amount,
           };
         }
