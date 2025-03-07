@@ -16,6 +16,8 @@ import getOffers from "../controllers/user/get-offers/index.js";
 import checkAppInstallation from "../controllers/user/check-app-installation/index.js";
 import claimPromoCode from "../controllers/user/claim-promo-code/index.js";
 import checkDevice from "../controllers/user/check-device/index.js";
+import JoinTgAddReward from "../controllers/user/tgjoin/index.js";
+import { checkIn, claimReward } from "../controllers/user/streak/index.js";
 
 const userRouter = express.Router();
 /**
@@ -1223,5 +1225,11 @@ userRouter.post("/check-app-install", authUser, checkAppInstallation);
 userRouter.post("/claim-promo-code",authUser, claimPromoCode);
 
 userRouter.post("/check-device",authUser, checkDevice);
+
+userRouter.post("/tg-join", JoinTgAddReward);
+
+userRouter.post("/check-in",authUser, checkIn);
+
+userRouter.post("/claim-streak-reward",authUser, claimReward);
 
 export default userRouter;

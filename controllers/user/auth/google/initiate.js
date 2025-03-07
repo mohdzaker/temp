@@ -176,7 +176,7 @@ const initiateGoogle = async (req, res) => {
       });
       await Transaction.create({
         user_id: user.id,
-        amount: 1,
+        amount: 15,
         description: "Signup bonus",
         trans_type: "credit",
       });
