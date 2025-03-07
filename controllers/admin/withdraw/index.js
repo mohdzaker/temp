@@ -61,6 +61,7 @@ export const rejectWithdraw = async (req, res) => {
     }
     checkWithdraw.status = "rejected";
     await checkWithdraw.save();
+    await sendNotificationToUser("Withdraw rejected!", "Your withdraw was rejected!", user_id);
     res.json({
       status: "success",
       message: "Withdrawal rejected successfully",

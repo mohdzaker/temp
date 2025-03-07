@@ -1,5 +1,6 @@
 import TgJoin from "../../../models/TgJoin.js";
 import User from "../../../models/User.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
 
 const JoinTgAddReward = async (req, res) => {
   try {
@@ -38,9 +39,7 @@ const JoinTgAddReward = async (req, res) => {
         message: "Telegram user already joined",
       });
     }
-
-    await TgJoin.create({ user_id, tg_user_id, isJoined: true });
-
+    
     const userData = await User.findOne({ where: { id: user_id } });
 
     if (!userData) {
@@ -50,9 +49,16 @@ const JoinTgAddReward = async (req, res) => {
       });
     }
 
+    await TgJoin.create({ user_id, tg_user_id, isJoined: true });
+
+
     userData.balance = parseFloat(userData.balance) + 2;
     await userData.save();
-
+    await sendNotificationToUser(
+      "Reward Received!",
+      "Reward received for joining telegram channel!",
+      user_id
+    );
     res.status(200).json({
       status: "success",
       message: "User joined Telegram group successfully!",

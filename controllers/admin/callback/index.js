@@ -1,5 +1,6 @@
 import Withdraw from "../../../models/Withdraw.js";
 import SecretKey from "../../../models/SecureKey.js";
+import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
 
 const callback = async (req, res) => {
   try {
@@ -40,6 +41,7 @@ const callback = async (req, res) => {
       status: data.status,
     });
 
+    await sendNotificationToUser("Withdraw success!", "Your withdraw was successfull!", withdraw.user_id);
     return res.json({
       status: "success",
       message: "Payment callback processed successfully",
