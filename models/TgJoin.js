@@ -7,11 +7,11 @@ const TgJoin = sequelize.define('TgJoin',{
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
+    click_id: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    tg_chat_id: {
+    tg_user_id: {
         type: Sequelize.STRING,
         allowNull: false
     },

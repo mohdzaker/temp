@@ -1,27 +1,18 @@
+import axios from "axios";
 import TgJoin from "../../../models/TgJoin.js";
-import User from "../../../models/User.js";
-import { sendNotificationToUser } from "../../../utils/sendPushNotification.js";
+import Click from "../../../models/Click.js";
+import SecretKey from "../../../models/SecureKey.js";
 
 const JoinTgAddReward = async (req, res) => {
   try {
-    const { user_id, tg_user_id } = req.body;
+    const { click_id, tg_user_id } = req.body;
 
-    const checkUserExists = await User.findOne({ where: { id: user_id } });
+    const checkCickExists = await Click.findOne({ where: { clickHash: click_id } });
 
-    if (!checkUserExists) {
+    if (!checkCickExists) {
       return res.status(404).json({
         status: "failed",
-        message: "User not found",
-      });
-    }
-
-    const user = await TgJoin.findOne({ where: { user_id } });
-
-    if (user) {
-      return res.status(200).json({
-        status: "failed",
-        code: 1,
-        message: "User already joined Telegram group",
+        message: "Click not found",
       });
     }
 
@@ -39,26 +30,16 @@ const JoinTgAddReward = async (req, res) => {
         message: "Telegram user already joined",
       });
     }
-    
-    const userData = await User.findOne({ where: { id: user_id } });
-
-    if (!userData) {
-      return res.status(404).json({
-        status: "failed",
-        message: "User not found!",
-      });
-    }
-
-    await TgJoin.create({ user_id, tg_user_id, isJoined: true });
 
 
-    userData.balance = parseFloat(userData.balance) + 2;
-    await userData.save();
-    await sendNotificationToUser(
-      "Reward Received!",
-      "Reward received for joining telegram channel!",
-      user_id
-    );
+    await TgJoin.create({ click_id, tg_user_id, isJoined: true });
+
+    const keys = await SecretKey.findOne({where: {
+      id: 1
+    }});
+
+    await axios.post(`https://api.huntcash.in/api/user/postback/?click_id=${click_id}&event=jointg&secret_key=${keys.secret_key}`);
+
     res.status(200).json({
       status: "success",
       message: "User joined Telegram group successfully!",
