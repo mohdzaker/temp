@@ -18,6 +18,7 @@ import claimPromoCode from "../controllers/user/claim-promo-code/index.js";
 import checkDevice from "../controllers/user/check-device/index.js";
 import JoinTgAddReward from "../controllers/user/tgjoin/index.js";
 import { checkIn, claimReward } from "../controllers/user/streak/index.js";
+import claimSignupBonus from "../controllers/user/claim-signup-bonux/index.js";
 
 const userRouter = express.Router();
 /**
@@ -1231,5 +1232,6 @@ userRouter.post("/tg-join", JoinTgAddReward);
 userRouter.post("/check-in",authUser, checkIn);
 
 userRouter.post("/claim-streak-reward",authUser, claimReward);
+userRouter.post("/claim-signup-bonus",authUser, claimSignupBonus);
 
 export default userRouter;
