@@ -174,7 +174,12 @@ const initiateGoogle = async (req, res) => {
           mobileNumber,
         },
       });
-      
+      await Transaction.create({
+        user_id: user.id,
+        amount: 2,
+        description: "Signup bonus",
+        trans_type: "credit",
+      });
       // Record the referral in Referlist when a new user is created
       if (referedById) {
         await Referlist.create({
