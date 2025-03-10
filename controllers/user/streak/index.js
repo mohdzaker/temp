@@ -4,8 +4,8 @@ import Transaction from "../../../models/Transaction.js";
 
 const checkIn = async (req, res) => {
   try {
-    const user_id = req.user.id
-    
+    const user_id = req.user.id;
+
     const streak = await Streak.findOne({ where: { user_id } });
 
     if (!streak) {
@@ -26,9 +26,9 @@ const checkIn = async (req, res) => {
       streak.streakCount += 1;
       streak.lastCheckIn = today;
     } else if (diffInDays > 1) {
-      streak.streakCount = 1; 
+      streak.streakCount = 1;
       streak.lastCheckIn = today;
-      streak.claimedReward = false; 
+      streak.claimedReward = false;
     } else {
       return res.status(400).json({
         status: "failed",
@@ -53,7 +53,7 @@ const checkIn = async (req, res) => {
 
 const claimReward = async (req, res) => {
   try {
-    const user_id = req.user.id
+    const user_id = req.user.id;
 
     const streak = await Streak.findOne({ where: { user_id } });
 
@@ -116,4 +116,32 @@ const claimReward = async (req, res) => {
   }
 };
 
-export { checkIn, claimReward };
+const getUserStreak = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+
+    const streak = await Streak.findOne({ where: { user_id } });
+
+    if (!streak) {
+      return res.status(404).json({
+        status: "failed",
+        message: "No streak found!",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      streakCount: streak.streakCount,
+      lastCheckIn: streak.lastCheckIn,
+      claimedReward: streak.claimedReward,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      status: "failed",
+      message: "Error retrieving streak",
+    });
+  }
+};
+
+export { checkIn, claimReward, getUserStreak };
