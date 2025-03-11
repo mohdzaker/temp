@@ -50,8 +50,6 @@ const claimPromoCode = async (req, res) => {
       amount: promo.per_user,
       description: "Claimed Promo Code",
       trans_type: "credit",
-      createdAt: new Date(),
-      updatedAt: new Date(),
     });
 
     if (!newTransaction) {

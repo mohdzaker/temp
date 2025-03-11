@@ -18,6 +18,10 @@ const Transaction = sequelize.define('Transaction',{
     description: {
         type: Sequelize.TEXT,
         allowNull: false
+    },
+    trans_type: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 
