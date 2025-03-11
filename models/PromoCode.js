@@ -22,6 +22,10 @@ const PromoCode = sequelize.define('PromoCode',{
     expires: {
         type: Sequelize.DATE,
         allowNull: false
+    },
+    code: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 

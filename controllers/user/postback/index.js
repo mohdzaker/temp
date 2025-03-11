@@ -60,11 +60,11 @@ const handlePostback = async (req, res) => {
 
     const checkEventExists = await Event.findOne({
       where: {
-        id: event
+        id: event,
       },
     });
 
-    console.log("dhek bhopadike", checkEventExists)
+    console.log("dhek bhopadike", checkEventExists);
 
     if (!checkEventExists) {
       return res.status(404).json({
@@ -101,8 +101,8 @@ const handlePostback = async (req, res) => {
       where: { id: checkClickHash.campaign_id },
     });
 
-    if(offer.pkg_name != null){
-      if(!checkClickHash.is_user_app_installed){
+    if (offer.pkg_name != null) {
+      if (!checkClickHash.is_user_app_installed) {
         return res.status(400).json({
           status: "failed",
           message: "User is not installed the app!",
@@ -177,13 +177,13 @@ const handlePostback = async (req, res) => {
         "You have received commission!",
         referrer
       );
+      await Transaction.create({
+        user_id: user.referedBy,
+        amount: referrer_amount,
+        description: "Refer Commission",
+        trans_type: "credit",
+      });
     }
-    await Transaction.create({
-      user_id: referrer,
-      amount: referrer_amount,
-      description: "Refer Commission",
-      trans_type: "credit",
-    });
 
     const allEventsInCampaign = await Event.findAll({
       where: { campaign_id: checkClickHash.campaign_id },
