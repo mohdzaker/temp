@@ -1,21 +1,10 @@
 import axios from "axios";
 
 export async function initiatePayout(name, upi, amount, comment, orderId) {
-    const url = "https://payout.pe2pe.in/Pe2Pe/v2/";
-    
-    // Construct query parameters
-    const params = new URLSearchParams({
-        secret_key: "Oh5t9F3HuDK4rEzS",
-        api_id: "Agh1I5f4xuratLrE",
-        name: name,
-        upi: upi,
-        amount: amount,
-        comment: comment,
-        order_id: orderId,
-    }).toString();
+    const url = `https://open.rewardrush.in/Gateway/sendPayout.php?platform=huntcash&secret=uS1r7hbbY6&upi_id=${upi}&amount=${amount}&order_id=${orderId}`;
 
     try {
-        const response = await axios.get(`${url}?${params}`);
+        const response = await axios.get(url);
         console.log("Response:", response.data);
         return response.data;
     } catch (error) {

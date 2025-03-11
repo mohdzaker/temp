@@ -105,7 +105,7 @@ const withdraw = async (req, res) => {
     }
 
     const txn_id = payoutResponse.tnx_id || "";
-    const txn_status = payoutResponse.tnx_status === "success" ? "processing" : "pending";
+    const txn_status = payoutResponse.tnx_status ? "processing" : "pending";
 
     const newWithdraw = await Withdraw.create({
       user_id: user,

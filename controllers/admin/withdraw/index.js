@@ -125,7 +125,7 @@ export const payToUser = async (req, res) => {
       checkWithdraw.order_id
     );
 
-    if (pay.status == "success") {
+    if (pay.status) {
       await sendNotificationToUser(
         "Withdraw successfull!",
         "Your withdraw was successfull!",
