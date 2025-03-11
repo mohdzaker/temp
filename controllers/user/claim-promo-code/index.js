@@ -11,7 +11,7 @@ const claimPromoCode = async (req, res) => {
         const user_id = req.user.id;
         const { promo_code } = req.body;
 
-        const promo = await PromoCode.findOne({ where: { id: promo_code }, transaction });
+        const promo = await PromoCode.findOne({ where: { code: promo_code }, transaction });
 
         if (!promo) {
             return res.status(400).json({ status: "failed", message: "Invalid promo code" });

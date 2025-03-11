@@ -8,6 +8,13 @@ const createPromoCode = async (req, res) => {
     try {
         const { per_user, total_users, expires } = req.body;
         const promoCode = generatePromoCode();
+
+        if (!per_user || !total_users || !expires) {
+            return res.status(400).json({
+                status: "failed",
+                message: "All fields (per_user, total_users, expires) are required!",
+            });
+        }
         
         const newPromo = await PromoCode.create({
             per_user,
