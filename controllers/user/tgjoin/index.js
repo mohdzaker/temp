@@ -38,8 +38,8 @@ const JoinTgAddReward = async (req, res) => {
       id: 1
     }});
 
-    await axios.post(`https://api.huntcash.in/api/user/postback/?click_id=${click_id}&event=jointg&secret_key=${keys.secret_key}`);
-
+    const res = await axios.post(`https://api.huntcash.in/api/user/postback/?click_id=${click_id}&event=jointg&secret_key=${keys.secret_key}`);
+    console.log(res)
     res.status(200).json({
       status: "success",
       message: "User joined Telegram group successfully!",
