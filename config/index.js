@@ -14,6 +14,7 @@ if(process.env.NODE_ENV !== 'production'){
         dialect: 'mysql',
         port: process.env.DB_PORT
     });
+    console.log("On prod db")
 }
 
 export const connectToDb = async () => {
