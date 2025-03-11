@@ -10,7 +10,7 @@ const claimSignupBonus = async (req, res) => {
       },
     });
 
-    if (user.hasReceivedBonus === true) {
+    if (user.hasReceivedBonus) {
       return res.status(404).json({
         status: "failed",
         message: "User already received signup bonus!",
