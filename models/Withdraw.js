@@ -11,9 +11,13 @@ const Withdraw = sequelize.define("Withdraw", {
         type: Sequelize.INTEGER,
         allowNull: false,
     },
-    upi_id:{
+    type: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    upi_id:{
+        type: Sequelize.STRING,
+        allowNull: true
     },
     tnx_id: {
         type: Sequelize.STRING,

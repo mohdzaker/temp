@@ -2,126 +2,115 @@ import Transaction from "../../../models/Transaction.js";
 import User from "../../../models/User.js";
 import Withdraw from "../../../models/Withdraw.js";
 import Config from "../../../models/Config.js";
-import { generateOrderId, initiatePayout } from "../../../utils/initiatePayout.js";
+import {
+  generateOrderId,
+  initiatePayout,
+} from "../../../utils/initiatePayout.js";
 import { Op } from "sequelize";
 
 const withdraw = async (req, res) => {
   try {
     const user = req.user.id;
-    const { upi_id, amount, comment = "HuntCash" } = req.body;
+    const { upi_id, amount, type, comment = "HuntCash" } = req.body;
 
-    if (!upi_id || upi_id.trim() === "") {
+    // Validate Input
+    if (!upi_id?.trim())
       return res.json({
         status: "failed",
         message: "Please enter a valid UPI ID!",
       });
-    }
-
-    if (!amount || isNaN(amount) || amount <= 0) {
+    if (!amount || isNaN(amount) || amount <= 0)
       return res.json({
         status: "failed",
         message: "Please enter a valid amount!",
       });
-    }
-
-    const userRecord = await User.findOne({ where: { id: user } });
-    if (!userRecord) {
+    if (!["upi", "google_play"].includes(type))
       return res.json({
         status: "failed",
-        message: "User not found!",
+        message: "Invalid type, please enter either 'upi' or 'google_play'.",
       });
-    }
 
-    const siteConfig = await Config.findOne({ where: { id: 1 } });
+    const userRecord = await User.findOne({ where: { id: user } });
+    if (!userRecord)
+      return res.json({ status: "failed", message: "User not found!" });
 
-    if (!userRecord.isPromoUser && amount < siteConfig.minimum_withdraw) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const lastWithdraw = await Withdraw.findOne({
+      where: { user_id: user, createdAt: { [Op.gte]: today } },
+      order: [["createdAt", "DESC"]],
+    });
+    if (lastWithdraw)
+      return res.json({
+        status: "failed",
+        message: "You can only withdraw once per day.",
+      });
+
+    const siteConfig =
+      type === "upi" ? await Config.findOne({ where: { id: 1 } }) : null;
+
+    if (userRecord.balance < amount)
+      return res.json({
+        status: "failed",
+        message: "Insufficient balance in the wallet!",
+      });
+
+    if (type === "google_play" && amount < 10)
+      return res.json({
+        status: "failed",
+        message: "Minimum amount for Google Play code is ₹10!",
+      });
+    if (type === "upi" && amount < siteConfig?.minimum_withdraw) {
       return res.json({
         status: "failed",
         message: `Minimum withdrawal amount should be ${siteConfig.minimum_withdraw}`,
       });
     }
 
-    if (userRecord.balance < amount) {
-      return res.json({
-        status: "failed",
-        message: "Insufficient balance in the wallet!",
-      });
-    }
-
-    // const totalCreditAmount = await Transaction.sum("amount", {
-    //   where: {
-    //     user_id: user,
-    //     trans_type: "credit",
-    //   },
-    // });
-
-    // const totalDebitditAmount = await Transaction.sum("amount", {
-    //   where: {
-    //     user_id: user,
-    //     trans_type: "debit",
-    //   },
-    // });
-
-    // const totalamo = amount + totalDebitditAmount;
-    // if (totalamo > totalCreditAmount) {
-    //   return res.json({
-    //     status: "failed",
-    //     message: "You have exceeded your credited amount.",
-    //   });
-    // }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); 
-
-    const lastWithdraw = await Withdraw.findOne({
-      where: {
-        user_id: user,
-        createdAt: { [Op.gte]: today },
-      },
-      order: [["createdAt", "DESC"]],
-    });
-
-    if (lastWithdraw) {
-      return res.json({
-        status: "failed",
-        message: "You can only withdraw once per day.",
-      });
-    }
-
-    const newBalance = userRecord.balance - amount;
-    await User.update({ balance: newBalance }, { where: { id: user } });
+    await User.update(
+      { balance: userRecord.balance - amount },
+      { where: { id: user } }
+    );
 
     const order_id = generateOrderId();
-    let payoutResponse = { tnx_id: "", tnx_status: "pending", message: "" };
 
-    if (amount <= 100) {
-      payoutResponse = await initiatePayout(
+    let txn_id = "0",
+      txn_status = "pending",
+      withdraw_status = 2;
+
+    if (type === "upi" && amount <= 100) {
+      const payoutResponse = await initiatePayout(
         userRecord.username,
         upi_id,
         amount,
         comment,
         order_id
       );
+      txn_id = payoutResponse.tnx_id || "0";
+      txn_status = payoutResponse.tnx_status ? "processing" : "pending";
+      withdraw_status = txn_status === "pending" ? 2 : 3;
+    } else if (type === "google_play") {
+      txn_id = `GPAY-${Math.floor(100000 + Math.random() * 900000)}`;
+      txn_status = "processing"; 
+      withdraw_status = 3; 
     }
-
-    const txn_id = payoutResponse.tnx_id || "";
-    const txn_status = payoutResponse.tnx_status ? "processing" : "pending";
 
     const newWithdraw = await Withdraw.create({
       user_id: user,
+      type,
       upi_id,
       tnx_id: txn_id,
       order_id,
       amount,
       time: new Date(),
-      withdraw_status: txn_status === "pending" ? 2 : 3,
+      withdraw_status,
       status: txn_status,
     });
 
     await Transaction.create({
       user_id: user,
       amount,
-      description: `Withdrawal of ${amount} to UPI ${upi_id}`,
+      description: `Withdrawal of ${amount} to ${type.toUpperCase()} ${upi_id}`,
       trans_type: "debit",
     });
 
