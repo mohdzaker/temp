@@ -29,6 +29,10 @@ const Withdraw = sequelize.define("Withdraw", {
         type: Sequelize.INTEGER,
         allowNull: false,
     },
+    redeem_code:{
+        type: Sequelize.STRING,
+        defaultValue: ""
+    },
     time:{
         type: Sequelize.DATE,
         allowNull: false
