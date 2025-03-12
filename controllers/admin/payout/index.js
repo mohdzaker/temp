@@ -2,13 +2,13 @@ import Withdraw from "../../../models/Withdraw.js";
 
 const getPendingWithdraw = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, status="pending" } = req.query;
 
         const offset = (page - 1) * limit;
 
         const pendingWithdrawals = await Withdraw.findAndCountAll({
             where: {
-                status: 'processing'
+                status
             },
             offset: parseInt(offset),
             limit: parseInt(limit),
