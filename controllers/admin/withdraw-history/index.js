@@ -3,12 +3,12 @@ import Withdraw from "../../../models/Withdraw.js";
 const getWithdrawHistory = async (req, res) => {
     try {
         const {user_id} = req.body; 
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, status="pending" } = req.query;
 
         const offset = (page - 1) * limit;
 
         const { rows, count } = await Withdraw.findAndCountAll({
-            where: { user_id },
+            where: { user_id, status },
             order: [["time", "DESC"]],
             limit: parseInt(limit),
             offset: parseInt(offset),
