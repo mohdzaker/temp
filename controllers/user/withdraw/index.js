@@ -89,11 +89,11 @@ const withdraw = async (req, res) => {
       txn_status = payoutResponse.tnx_status ? "processing" : "pending";
       withdraw_status = txn_status === "pending" ? 2 : 3;
     } else if (type === "google_play") {
+      // Dummy Google Play Transaction ID
       txn_id = `GPAY-${Math.floor(100000 + Math.random() * 900000)}`;
-      txn_status = "processing";
-      withdraw_status = 3;
+      txn_status = "processing"; // Simulating processing status
+      withdraw_status = 3; // Mark as processing
     }
-
     const newWithdraw = await Withdraw.create({
       user_id: user,
       type,
@@ -109,7 +109,10 @@ const withdraw = async (req, res) => {
     await Transaction.create({
       user_id: user,
       amount,
-      description: `Withdrawal of ${amount} to ${type.toUpperCase()} ${upi_id}`,
+      description:
+        type === "google_play"
+          ? `Google Play withdrawal of ₹${amount}`
+          : `Withdrawal of ₹${amount} to ${type.toUpperCase()} ${upi_id}`,
       trans_type: "debit",
     });
 
