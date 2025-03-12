@@ -13,23 +13,22 @@ const withdraw = async (req, res) => {
     const user = req.user.id;
     const { upi_id, amount, type, comment = "HuntCash" } = req.body;
 
-    // Validate Input
-    if (!upi_id?.trim())
-      return res.json({
-        status: "failed",
-        message: "Please enter a valid UPI ID!",
-      });
-    if (!amount || isNaN(amount) || amount <= 0)
-      return res.json({
-        status: "failed",
-        message: "Please enter a valid amount!",
-      });
     if (!["upi", "google_play"].includes(type))
       return res.json({
         status: "failed",
         message: "Invalid type, please enter either 'upi' or 'google_play'.",
       });
-
+    if (type === "upi" && !upi_id) {
+      return res.json({
+        status: "failed",
+        message: "Please enter a valid UPI ID!",
+      });
+    }
+    if (!amount || isNaN(amount) || amount <= 0)
+      return res.json({
+        status: "failed",
+        message: "Please enter a valid amount!",
+      });
     const userRecord = await User.findOne({ where: { id: user } });
     if (!userRecord)
       return res.json({ status: "failed", message: "User not found!" });
@@ -91,8 +90,8 @@ const withdraw = async (req, res) => {
       withdraw_status = txn_status === "pending" ? 2 : 3;
     } else if (type === "google_play") {
       txn_id = `GPAY-${Math.floor(100000 + Math.random() * 900000)}`;
-      txn_status = "processing"; 
-      withdraw_status = 3; 
+      txn_status = "processing";
+      withdraw_status = 3;
     }
 
     const newWithdraw = await Withdraw.create({
