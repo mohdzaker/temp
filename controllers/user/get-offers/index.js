@@ -35,6 +35,7 @@ const getOffers = async (req, res) => {
           status: "active",
         },
         attributes: ["id", "event_title", "event_short_desc", "event_amount"],
+        order: [["event_amount", "ASC"]], // Sorting events by amount in ascending order
       });
 
       // Step 2.2: Check if the user has completed any events of this offer
@@ -60,10 +61,17 @@ const getOffers = async (req, res) => {
       if (completedEvents.length !== events.length) {
         filteredOffers.push({
           ...offer.toJSON(),
-          events, // Include all events for this offer in the response
+          events, // Include sorted events
         });
       }
     }
+
+    // Step 4: Sort filtered offers based on the lowest event amount
+    filteredOffers.sort((a, b) => {
+      const minA = a.events.length > 0 ? a.events[0].event_amount : 0;
+      const minB = b.events.length > 0 ? b.events[0].event_amount : 0;
+      return minA - minB;
+    });
 
     return res.status(200).json({
       status: "success",
