@@ -149,40 +149,44 @@ const handlePostback = async (req, res) => {
       );
       return +newAmout;
     };
-    const refer_percentage = config.per_refer;
-    const referrer_amount = getPercentage(
-      checkEventExists.dataValues.event_amount,
-      refer_percentage
-    );
-    const referrer = user.referedBy;
-    const referrerUser = await User.findOne({
-      where: { id: referrer },
-    });
-    if (referrer && referrerUser) {
-      referrerUser.balance += referrer_amount;
-      await referrerUser.save();
-    }
-    const referedUser = await Referlist.findOne({
-      where: {
-        user_id: referrerUser.id,
-        referred_user_id: checkClickHash.user_id,
-      },
-    });
 
-    if (referedUser) {
-      referedUser.refer_commission += referedUser + referrer_amount;
-      await referedUser.save();
-      await sendNotificationToUser(
-        "Commission Received",
-        "You have received commission!",
-        referrer
+    if (event !== 100) {
+      const refer_percentage = config.per_refer;
+      const referrer_amount = getPercentage(
+        checkEventExists.dataValues.event_amount,
+        refer_percentage
       );
-      await Transaction.create({
-        user_id: user.referedBy,
-        amount: referrer_amount,
-        description: "Refer Commission",
-        trans_type: "credit",
+      const referrer = user.referedBy;
+      const referrerUser = await User.findOne({
+        where: { id: referrer },
       });
+      if (referrerUser) {
+        referrerUser.balance += referrer_amount;
+        await referrerUser.save();
+      }
+      const referedUser = await Referlist.findOne({
+        where: {
+          user_id: referrer,
+          referred_user_id: checkClickHash.user_id,
+        },
+      });
+
+      if (referedUser) {
+        referedUser.refer_commission += referrer_amount;
+
+        await referedUser.save();
+        await sendNotificationToUser(
+          "Commission Received",
+          "You have received commission!",
+          referrer
+        );
+        await Transaction.create({
+          user_id: user.referedBy,
+          amount: referrer_amount,
+          description: "Refer Commission",
+          trans_type: "credit",
+        });
+      }
     }
 
     const allEventsInCampaign = await Event.findAll({
