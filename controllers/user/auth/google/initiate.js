@@ -187,7 +187,7 @@ const initiateGoogle = async (req, res) => {
       await sendVerifyCode(mobileNumber, google_token, res, sms_hash);
     }
   } catch (error) {
-    console.error("Error during initiate:", error.message);
+    console.error("Error during initiate:", error);
     return res.status(500).json({
       status: "failed",
       message: error.message || "An unexpected error occurred.",
