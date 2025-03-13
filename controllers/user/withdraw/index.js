@@ -60,7 +60,7 @@ const withdraw = async (req, res) => {
       const opcode = amount <= 29 ? "GPCS" : "GPC";
       const response = await axios.get(`https://www.connect.inspay.in/v3/recharge/api?username=IP8529740144&token=198fb67a0e1fbadef4fd9ad7580b95db&opcode=${opcode}&number=${userId}&amount=${amount}&orderid=${orderId}&format=json`);
       console.log(response)
-      if (response.data.status === "success") {
+      if (response.data.status == "Success") {
         txnStatus = "success";
         withdrawStatus = 3;
         redeemCode = response.data.opid;
