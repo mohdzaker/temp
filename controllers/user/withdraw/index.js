@@ -62,7 +62,7 @@ const withdraw = async (req, res) => {
       console.log(response)
       if (response.data.status == "Success") {
         txnStatus = "success";
-        withdrawStatus = 3;
+        withdrawStatus = 1;
         redeemCode = response.data.opid;
       } else {
         txnStatus = "processing";
