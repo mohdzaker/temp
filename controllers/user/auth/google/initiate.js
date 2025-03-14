@@ -163,7 +163,7 @@ const initiateGoogle = async (req, res) => {
         username: tokenInfo.payload.name,
         email: tokenInfo.payload.email,
         mobileNumber,
-        profilePic: tokenInfo.payload.picture,
+        profilePic: tokenInfo.payload.picture || `https://ui-avatars.com/api/?name=${tokenInfo.payload.name}&background=0D8ABC&color=fff`,
         referedBy: referedById || 0,
         referCode,
         isPromoUser: true,
